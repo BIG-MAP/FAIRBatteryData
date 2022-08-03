@@ -100,15 +100,10 @@ ts.add((TimeStamp_HHMMSS, d['elucidation'],
 
 
 # Add mappings
-ts.add_mapsTo(d['InstantaneousCurrent'],
-              BatteryData.uri, 'battery_current')
-ts.add_mapsTo(d['InstantaneousCurrent'],
-              cycledata.meta.uri, 'Current')
-
-ts.add_mapsTo(d['TimeStamp_S'],
-              BatteryData.uri, 'test_time')
-ts.add_mapsTo(d['TimeStamp_HHMMSS'],
-              cycledata.meta.uri, 'Test_Time')
+ts.add_mapsTo(d['InstantaneousCurrent'], BatteryData, 'battery_current')
+ts.add_mapsTo(d['InstantaneousCurrent'], cycledata.meta, 'Current')
+ts.add_mapsTo(d['TimeStamp_S'], BatteryData, 'test_time')
+ts.add_mapsTo(d['TimeStamp_HHMMSS'], cycledata.meta, 'Test_Time')
 
 
 def timeconvert(times, format):
