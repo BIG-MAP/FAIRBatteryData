@@ -67,7 +67,7 @@ ts.add((TimeStamp, d['elucidation'],
         en('The time of a data point in a time serie.')))
 
 # Add timeFormat data property
-timeFormat = EMMO['EMMO_eeef9cd8-9e15-54a7-93fe-a1c20c8372cb']
+timeFormat = BATTINFO['EMMO_eeef9cd8-9e15-54a7-93fe-a1c20c8372cb']
 d['timeFormat'] = timeFormat
 ts.add((timeFormat, RDF.type, OWL.DatatypeProperty))
 ts.add((timeFormat, RDF.type, OWL.FunctionalProperty))
