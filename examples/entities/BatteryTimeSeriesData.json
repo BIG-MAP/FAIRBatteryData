@@ -1,0 +1,73 @@
+{
+    "name": "BatteryTimeSeriesData",
+    "version": "0.1",
+    "namespace": "http://onto-ns.com/meta",
+    "description": "A description of battery time series data",
+    "dimensions": [
+        {
+            "name": "n_measurements",
+            "description": "Number of measurements."
+        }
+    ],
+    "properties": [
+        {
+            "name": "battery_id",
+            "type": "string",
+            "dims": ["n_measurements"],
+            "description": "UUID of the battery that the data describes"
+        },
+        {
+            "name": "date_time_stamp",
+            "type": "string",
+            "dims": ["n_measurements"],
+            "description": "Date and time stamp of the measurement."
+        },
+        {
+            "name": "test_time",
+            "type": "float",
+            "dims": ["n_measurements"],
+            "unit": "s",
+            "description": "Time of the measurement relative to the start of the experiment."
+        },
+        {
+            "name": "battery_current",
+            "type": "float",
+            "dims": ["n_measurements"],
+            "unit": "A",
+            "description": "Measured instantaneous electric current through the battery."
+        },
+        {
+            "name": "battery_voltage",
+            "type": "float",
+            "dims": ["n_measurements"],
+            "unit": "V",
+            "description": "Measured instantaneous voltage of the battery."
+        },
+        {
+            "name": "battery_temperature",
+            "type": "float",
+            "dims": ["n_measurements"],
+            "unit": "degC",
+            "description": "Measured instantaneous temperature of the battery."
+        },
+        {
+            "name": "battery_temperature_location",
+            "type": "string",
+            "dims": ["n_measurements"],
+            "description": "Location of the battery temperature measurement. Valid entries: housing, tab, internal, unknown."
+        },
+        {
+            "name": "environment_temperature",
+            "type": "float",
+            "dims": ["n_measurements"],
+            "unit": "degC",
+            "description": "Measured instantaneous temperature of the environment."
+        },
+        {
+            "name": "environment_temperature_source",
+            "type": "float",
+            "dims": ["n_measurements"],
+            "description": "Source of the environment temperature data. Valid entries: set, measured, unknown."
+        }
+    ]
+}

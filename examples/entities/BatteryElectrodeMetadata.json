@@ -1,0 +1,125 @@
+{
+    "name": "BatteryElectrodeMetadata",
+    "version": "0.1",
+    "namespace": "http://onto-ns.com/meta",
+    "description": "A description of lithium ion battery electrode metadata",
+    "dimensions": [
+        {
+            "name": "N",
+            "description": "Number of battery cells"
+        }
+    ],
+    "properties": [
+        {
+            "name": "uuid",
+            "type": "string",
+            "dims": ["N"],
+            "description": "UUID of the electrode"
+        },
+        {
+            "name": "active_material",
+            "type": "ref",
+            "$ref": "http://onto-ns.com/meta/0.1/BatteryElectrodeActiveMaterialMetadata",
+            "dims": ["N"],
+            "description": "UUID of the active material"
+        },
+        {
+            "name": "binder",
+            "type": "ref",
+            "$ref": "http://onto-ns.com/meta/0.1/BatteryElectrodeBinderMetadata",
+            "dims": ["N"],
+            "description": "UUID of the binder"
+        },
+        {
+            "name": "additive",
+            "type": "ref",
+            "$ref": "http://onto-ns.com/meta/0.1/BatteryElectrodeAdditiveMetadata",
+            "dims": ["N"],
+            "description": "UUID of the additives"
+        },
+        {
+            "name": "current_collector",
+            "type": "ref",
+            "$ref": "http://onto-ns.com/meta/0.1/BatteryElectrodeCurrentCollectorMetadata",
+            "dims": ["N"],
+            "description": "UUID of the current collector"
+        },
+        {
+            "name": "active_material_mass_fraction",
+            "type": "float",
+            "dims": ["N"],
+            "description": "Mass of the active material relative to the total mass of the coating"
+        },
+        {
+            "name": "binder_mass_fraction",
+            "type": "float",
+            "dims": ["N"],
+            "description": "Mass of the binder relative to the total mass of the coating"
+        },
+        {
+            "name": "additive_mass_fraction",
+            "type": "float",
+            "dims": ["N"],
+            "description": "Mass of the additive relative to the total mass of the coating"
+        },
+        {
+            "name": "planar_area",
+            "type": "float",
+            "dims": ["N"],
+            "unit": "m**2",
+            "description": "Geometric planar area of the electrode"
+        },
+        {
+            "name": "length",
+            "type": "float",
+            "dims": ["N"],
+            "unit": "m",
+            "description": "Length of the electrode. For circular electrodes, the diameter"
+        },
+        {
+            "name": "width",
+            "type": "float",
+            "dims": ["N"],
+            "unit": "m",
+            "description": "Width of the electrode. For circular electrodes, the diameter"
+        },
+        {
+            "name": "shape",
+            "type": "string",
+            "dims": ["N"],
+            "description": "Shape of the electrode. Valid entries are: rectangular, circular, other, or unkonwn"
+        },
+        {
+            "name": "thickness",
+            "type": "float",
+            "dims": ["N"],
+            "unit": "m",
+            "description": "Thickness of the electrode, as measured from the current collector surface to the top of the coating"
+        },
+        {
+            "name": "active_material_loading",
+            "type": "float",
+            "dims": ["N"],
+            "unit": "kg/(m**2)",
+            "description": "Mass of active material per unit area of electrode"
+        },
+        {
+            "name": "nominal_porosity",
+            "type": "float",
+            "dims": ["N"],
+            "description": "Nominal porosity (void volume fraction) for the electrode coating"
+        },
+        {
+            "name": "nominal_tortuosity",
+            "type": "float",
+            "dims": ["N"],
+            "description": "Nominal tortuosity for the electrode coating"
+        },
+        {
+            "name": "coating_sides",
+            "type": "int",
+            "dims": ["N"],
+            "description": "Number of sides that are coated. Valid entries are integers: 1 or 2"
+        }
+    ]
+}

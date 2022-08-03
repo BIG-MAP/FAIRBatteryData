@@ -1,0 +1,48 @@
+{
+    "name": "BatteryElectrodeCurrentCollectorMetadata",
+    "version": "0.1",
+    "namespace": "http://onto-ns.com/meta",
+    "description": "A description of lithium ion battery current collector metadata",
+    "dimensions": [],
+    "properties": [
+        {
+            "name": "uuid",
+            "type": "string",
+            "description": "UUID of the current collector"
+        },
+        {
+            "name": "material_id",
+            "type": "string",
+            "description": "UUID of the material"
+        },
+        {
+            "name": "planar_area",
+            "type": "float",
+            "unit": "m**2",
+            "description": "Geometric planar area of the current collector"
+        },
+        {
+            "name": "length",
+            "type": "float",
+            "unit": "m",
+            "description": "Length of the current collector. For circular current collectors, the diameter"
+        },
+        {
+            "name": "width",
+            "type": "float",
+            "unit": "m",
+            "description": "Width of the current collector. For circular current collectors, the diameter"
+        },
+        {
+            "name": "shape",
+            "type": "string",
+            "description": "Shape of the current collector. Valid entries are: rectangular, circular, other, or unkonwn"
+        },
+        {
+            "name": "thickness",
+            "type": "float",
+            "unit": "m",
+            "description": "Thickness of the current collector"
+        }
+    ]
+}

@@ -1,0 +1,14 @@
+{
+    "name": "BatteryElectrodeBinderMetadata",
+    "version": "0.1",
+    "namespace": "http://onto-ns.com/meta",
+    "description": "A description of lithium ion battery electrode binder metadata",
+    "dimensions": [],
+    "properties": [
+        {
+            "name": "uuid",
+            "type": "string",
+            "description": "UUID of the binder"
+        }
+    ]
+}

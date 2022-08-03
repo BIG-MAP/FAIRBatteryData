@@ -33,7 +33,6 @@ def readRwthData(filename):
         },
     }
 
-
     session = {"collection_id": coll_raw.uuid, "key": cache_key}
 
     parser = DLiteExcelStrategy(config)

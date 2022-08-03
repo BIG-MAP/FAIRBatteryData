@@ -1,0 +1,35 @@
+{
+    "name": "MolecularEntityMetadata",
+    "version": "0.1",
+    "namespace": "http://onto-ns.com/meta",
+    "description": "A description of lithium ion battery material metadata",
+    "dimensions": [],
+    "properties": [
+        {
+            "name": "conventional_name",
+            "type": "string",
+            "description": "name of the molecuar entity"
+        },
+        {
+            "name": "linear_formula",
+            "type": "string",
+            "description": "chemical formula of the molecuar entity"
+        },
+        {
+            "name": "smiles",
+            "type": "string",
+            "description": "SMILES of the molecuar entity"
+        },
+        {
+            "name": "molar_mass",
+            "type": "float",
+            "unit": "g/mol",
+            "description": "molar mass of the molecular entity"
+        },
+        {
+            "name": "charge_number",
+            "type": "int",
+            "description": "charge number of the molecular entity"
+        }
+    ]
+}

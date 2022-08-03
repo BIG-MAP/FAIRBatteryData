@@ -1,0 +1,7 @@
+{
+    "conventional_name": "lithium hexafluorophosphate",
+    "linear_formula": "LiPF6",
+    "smiles": "F[P-](F)(F)(F)(F)F.[Li+]",
+    "molar_mass": 151.905,
+    "charge_number": -1
+}

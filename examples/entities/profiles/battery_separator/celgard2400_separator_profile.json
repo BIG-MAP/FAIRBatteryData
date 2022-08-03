@@ -1,0 +1,13 @@
+{
+    "uuid": [],
+    "layer_molecular_entity": {
+        "molecular_entity": [{
+            "isFile": true,
+            "filename": "PP_molecular_entity_profile.json"
+        }]
+    },
+    "surfactant_coated": "false",
+    "laminated": "false",
+    "nominal_porosity": 0.41,
+    "thickness": 25e-6
+}

@@ -1,0 +1,82 @@
+{
+    "name": "BatteryCyclingSeriesData",
+    "version": "0.1",
+    "namespace": "http://onto-ns.com/meta",
+    "description": "A minimal description of battery cycling in the cycle number domain.",
+    "dimensions": [
+        {
+            "name": "n_cycles",
+            "description": "Number of cycles."
+        },
+        {
+            "name": "n_protocols",
+            "description": "Number of protocols."
+        },
+        {
+            "name": "n_battery",
+            "description": "Number of batteries being tested."
+        }
+    ],
+    "properties": [
+        {
+            "name": "battery_metadata",
+            "type": "string",
+            "dims": ["n_battery"],
+            "description": "spec sheet information about the battery."
+        },
+        {
+            "name": "protocol_metadata",
+            "type": "string",
+            "dims": ["n_battery"],
+            "description": "capacity during charge."
+        },
+        {
+            "name": "charge_capacity",
+            "type": "double",
+            "dims": ["n_cycles"],
+            "unit": "Ah",
+            "description": "capacity during charge."
+        },
+        {
+            "name": "disharge_capacity",
+            "type": "double",
+            "dims": ["n_cycles"],
+            "unit": "Ah",
+            "description": "Capacity during discharge"
+        },
+        {
+            "name": "charge_energy",
+            "type": "string",
+            "dims": ["n_cycles"],
+            "unit": "Wh",
+            "description": "energy during charge."
+        },
+        {
+            "name": "dc_internal_resistance",
+            "type": "double",
+            "dims": ["n_cycles"],
+            "unit": "s",
+            "description": "Time of the measurement relative to the start of the experiment."
+        },
+        {
+            "name": "temperature_maximum",
+            "type": "double",
+            "dims": ["n_cycles"],
+            "unit": "C",
+            "description": "Temperature of the battery."
+        },
+        {
+            "name": "temperature_average",
+            "type": "double",
+            "dims": ["n_cycles"],
+            "unit": "C",
+            "description": "Temperature of the battery."
+        },
+        {
+            "name": "date_time_iso",
+            "type": "double",
+            "dims": ["n_cycles"],
+            "description": "date time stamp."
+        }
+    ]
+}

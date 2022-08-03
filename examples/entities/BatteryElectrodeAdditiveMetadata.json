@@ -1,0 +1,14 @@
+{
+    "name": "BatteryElectrodeAdditiveMetadata",
+    "version": "0.1",
+    "namespace": "http://onto-ns.com/meta",
+    "description": "A description of lithium ion battery electrode additive metadata",
+    "dimensions": [],
+    "properties": [
+        {
+            "name": "uuid",
+            "type": "string",
+            "description": "UUID of the additive"
+        }
+    ]
+}

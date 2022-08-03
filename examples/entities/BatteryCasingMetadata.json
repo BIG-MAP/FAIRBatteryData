@@ -1,0 +1,42 @@
+{
+    "name": "BatteryCasingMetadata",
+    "version": "0.1",
+    "namespace": "http://onto-ns.com/meta",
+    "description": "A description of lithium ion battery casing metadata",
+    "dimensions": [],
+    "properties": [
+        {
+            "name": "uuid",
+            "type": "string",
+            "description": "UUID of the housing"
+        },
+        {
+            "name": "material_id",
+            "type": "string",
+            "description": "UUID of the housing material"
+        },
+        {
+            "name": "nominal_length",
+            "type": "float",
+            "unit": "m",
+            "description": "Length of the housing. For cylindrical/coin housing, the diameter"
+        },
+        {
+            "name": "nominal_width",
+            "type": "float",
+            "unit": "m",
+            "description": "Width of the housing. For cylindrical/coin housing, the diameter"
+        },
+        {
+            "name": "nominal_height",
+            "type": "float",
+            "unit": "m",
+            "description": "Height of the housing. For cylindrical/coin housing, the diameter"
+        },
+        {
+            "name": "form_factor",
+            "type": "string",
+            "description": "Form factor of the housing. Valid entries are: pouch, coin, prismatic, cylindrical, other, or unknown"
+        }
+    ]
+}

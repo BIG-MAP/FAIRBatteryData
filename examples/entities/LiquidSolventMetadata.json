@@ -1,0 +1,35 @@
+{
+    "name": "LiquidSolventMetadata",
+    "version": "0.1",
+    "namespace": "http://onto-ns.com/meta",
+    "description": "A description of lithium ion battery electrode metadata",
+    "dimensions": [
+        {
+            "name": "n_solvent",
+            "description": "Number of additives"
+        }
+    ],
+    "properties": [
+        {
+            "name": "molecular_entity",
+            "type": "ref",
+            "$ref": "http://onto-ns.com/meta/0.1/MolecularEntityMetadata",
+            "dims": ["n_solvent"],
+            "description": "salt material"
+        },
+        {
+            "name": "molecular_entity_mass_fraction",
+            "type": "float",
+            "dims": ["n_solvent"],
+            "unit": "g/g",
+            "description": "mass fraction of the molecular entities"
+        },
+        {
+            "name": "molecular_entity_volume_fraction",
+            "type": "float",
+            "dims": ["n_solvent"],
+            "unit": "m**3/m**3",
+            "description": "volume fraction of the molecular entities"
+        }
+    ]
+}

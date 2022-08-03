@@ -1,0 +1,30 @@
+{
+    "active_material":{
+        "isFile": true,
+        "filename": "nmc111_profile.json"
+    },
+    "binder": {
+        "isFile": true,
+        "filename": "cmc_binder_profile.json"
+    },
+    "additive": {
+        "isFile": true,
+        "filename": "carbon_black_profile.json"
+    },
+    "current_collector": {
+        "isFile": true,
+        "filename": "aluminium_current_collector_profile.json"
+    },
+    "active_material_mass_fraction": 0.94,
+    "binder_mass_fraction": 0.03,
+    "additive_mass_fraction": 0.03,
+    "planar_area": 0.01,
+    "length": 0.1,
+    "width": 0.1,
+    "shape": "rectangular",
+    "thickness": 100e-6,
+    "active_material_loading": 0.2,
+    "nominal_porosity": 0.85,
+    "nominal_tortuosity": 2,
+    "coating_sides": 2
+}

@@ -1,0 +1,19 @@
+{
+    "solvent_material": {
+        "molecular_entity": [{
+            "isFile": true,
+            "filename": "EC_molecular_entity_profile.json"
+        },
+        {
+            "isFile": true,
+            "filename": "DMC_molecular_entity_profile.json"
+        }],
+        "molecular_entity_mass_fraction": [0.5, 0.5],
+        "molecular_entity_volume_fraction": []
+    },
+    "salt": {
+        "isFile": true,
+        "filename": "LiPF6_molecular_entity_profile.json"
+    },
+    "salt_concentration": 1
+}

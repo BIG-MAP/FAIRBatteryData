@@ -1,0 +1,39 @@
+{
+    "name": "BatteryElectrolyteMetadata",
+    "version": "0.1",
+    "namespace": "http://onto-ns.com/meta",
+    "description": "A description of lithium ion battery electrode metadata",
+    "dimensions": [
+        {
+            "name": "n_solvent",
+            "description": "Number of additives"
+        },
+        {
+            "name": "n_salt",
+            "description": "Number of salts"
+        }
+    ],
+    "properties": [
+        {
+            "name": "solvent_material",
+            "type": "ref",
+            "$ref": "http://onto-ns.com/meta/0.1/LiquidSolventMetadata",
+            "dims": ["n_solvent"],
+            "description": "UUID of the solvent material"
+        },
+        {
+            "name": "salt",
+            "type": "ref",
+            "$ref": "http://onto-ns.com/meta/0.1/MolecularEntityMetadata",
+            "dims": ["n_salt"],
+            "description": "salt material"
+        },
+        {
+            "name": "salt_concentration",
+            "type": "float",
+            "dims": ["n_salt"],
+            "unit": "mol/L",
+            "description": "Concentration of salt in the electrolyte"
+        }
+    ]
+}

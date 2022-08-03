@@ -1,0 +1,73 @@
+{
+    "name": "BatterySeparatorMetadata",
+    "version": "0.1",
+    "namespace": "http://onto-ns.com/meta",
+    "description": "A description of lithium ion battery separator metadata",
+    "dimensions": [{
+        "name": "n_layer",
+        "description": "Number of layers"
+    }],
+    "properties": [
+        {
+            "name": "uuid",
+            "type": "string",
+            "description": "UUID of the separator"
+        },
+        {
+            "name": "layer_molecular_entity",
+            "type": "ref",
+            "$ref": "http://onto-ns.com/meta/0.1/LiquidSolventMetadata",
+            "dims": ["n_layer"],
+            "description": "molecuar entity comprising the layer material"
+        },
+        {
+            "name": "surfactant_coated",
+            "type": "sting",
+            "description": "indicates the presence of a surfactant"
+        },
+        {
+            "name": "laminated",
+            "type": "sting",
+            "description": "indicates the presence of a laminated structure"
+        },
+        {
+            "name": "planar_area",
+            "type": "float",
+            "unit": "m**2",
+            "description": "Geometric planar area of the separator"
+        },
+        {
+            "name": "length",
+            "type": "float",
+            "unit": "m",
+            "description": "Length of the separator. For circular separators, the diameter"
+        },
+        {
+            "name": "width",
+            "type": "float",
+            "unit": "m",
+            "description": "Width of the separator. For circular separators, the diameter"
+        },
+        {
+            "name": "shape",
+            "type": "string",
+            "description": "Shape of the separator. Valid entries are: rectangular, circular, other, or unkonwn"
+        },
+        {
+            "name": "thickness",
+            "type": "float",
+            "unit": "m",
+            "description": "Thickness of the separator"
+        },
+        {
+            "name": "nominal_porosity",
+            "type": "float",
+            "description": "Nominal porosity (void volume fraction) for the separator"
+        },
+        {
+            "name": "nominal_tortuosity",
+            "type": "float",
+            "description": "Nominal tortuosity for the separator"
+        }
+    ]
+}

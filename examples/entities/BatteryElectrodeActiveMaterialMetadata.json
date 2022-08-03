@@ -1,0 +1,31 @@
+{
+    "name": "BatteryElectrodeActiveMaterialMetadata",
+    "version": "0.1",
+    "namespace": "http://onto-ns.com/meta",
+    "description": "A description of lithium ion battery active material metadata",
+    "dimensions": [],
+    "properties": [
+        {
+            "name": "uuid",
+            "type": "string",
+            "description": "UUID of the material"
+        },
+        {
+            "name": "conventional_name",
+            "type": "string",
+            "description": "Conventional name of the active material. Valid entries are: LCO, LFP, LNMO, LMO, NMC, Graphite, Silicon, LTO, other, or unknown"
+        },
+        {
+            "name": "specific_capacity",
+            "type": "float",
+            "unit": "A*h/kg",
+            "description": "Specific electric charge capacity of the material."
+        },
+        {
+            "name": "density",
+            "type": "float",
+            "unit": "kg/(m**3)",
+            "description": "Density of the material."
+        }
+    ]
+}

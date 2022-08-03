@@ -3,7 +3,7 @@
 This example uses oteapi_dlite directly skipping otelib.
 """
 from pathlib import Path
-
+import os
 import dlite
 from oteapi.datacache import DataCache
 from oteapi_dlite.strategies.parse_excel import DLiteExcelStrategy
@@ -46,9 +46,11 @@ session.update(parser.initialize(session))
 parser = DLiteExcelStrategy(config)
 parser.get(session)
 
-CycleData = dlite.Instance.from_url(f'json://{entitydir}/BatteryCyclingTimeSeriesData.json')
+datamodel = "BatteryTimeSeriesData.json"
+datamodel_path = os.path.join(entitydir, datamodel)
+CycleData = dlite.Instance.from_url(f'json://{datamodel_path}')
 data = coll_raw.get("excel-data")
-inst = CycleData(dims=[len(data.Current),1])
+inst = CycleData(dims=[len(data.Current)])
 inst.current = data.Current
 inst.voltage = data.Voltage
 inst.time_stamp = data.Test_Time

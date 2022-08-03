@@ -1,0 +1,22 @@
+{
+    "positive_electrode": {
+        "isFile": true,
+        "filename": "battery_positive_electrode_profile.json"
+    },
+    "negative_electrode": {
+        "isFile": true,
+        "filename": "battery_negative_electrode_profile.json"
+    },
+    "electrolyte": {
+        "isFile": true,
+        "filename": "LP_1M_EC_DMC_1_1_g_g_profile.json"
+    },
+    "separator": {
+        "isFile": true,
+        "filename": "celgard2400_separator_profile.json"
+    },
+    "casing": {
+        "isFile": true,
+        "filename": "coin_r2016_profile.json"
+    }
+}
