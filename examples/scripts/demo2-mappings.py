@@ -106,6 +106,7 @@ ts.add_mapsTo(d['TimeStamp_S'], BatteryData, 'test_time')
 ts.add_mapsTo(d['TimeStamp_HHMMSS'], cycledata.meta, 'Test_Time')
 
 
+# Define conversion functions
 def timeconvert(times, format):
     """Convert an array of time stamps to seconds since the start.
 
@@ -116,7 +117,6 @@ def timeconvert(times, format):
         time.mktime(time.strptime(t.m if hasattr(t, 'm') else t, format))
         for t in times
     ]
-
     starttime = seconds[0]
     return np.array([t - starttime for t in seconds])
 
@@ -126,6 +126,7 @@ def timeconvert_HHMMSS(times):
     return timeconvert(times, "%H:%M:%S")
 
 
+# Add ontological description of conversion functions
 timeconvert_HHMMSS_IRI = ts.add_function(
     func=timeconvert_HHMMSS,
     expects=[d['TimeStamp_HHMMSS']],
@@ -134,13 +135,13 @@ timeconvert_HHMMSS_IRI = ts.add_function(
 )
 
 
+# Create BatteryData instance populated via ontological mappings
 inst = instantiate(
     meta=BatteryData.uri,
     instances=[cycledata],
     triplestore=ts,
     allow_incomplete=True,
-    quantity=ureg.Quantity,
-    function_repo=ts.function_repo,
+    quantity=ureg.Quantity,  # with our custum units
 )
 
 print()
