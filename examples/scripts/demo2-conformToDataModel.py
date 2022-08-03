@@ -1,12 +1,15 @@
 """Simple demo for reading a xslx file using oteapi-dlite.
 
 This example uses oteapi_dlite directly skipping otelib.
+
+First part of demo.
 """
 from pathlib import Path
 import os
 import dlite
 from oteapi.datacache import DataCache
 from oteapi_dlite.strategies.parse_excel import DLiteExcelStrategy
+
 #from oteapi.plugins import create_strategy
 
 
@@ -50,12 +53,16 @@ datamodel = "BatteryTimeSeriesData.json"
 datamodel_path = os.path.join(entitydir, datamodel)
 CycleData = dlite.Instance.from_url(f'json://{datamodel_path}')
 data = coll_raw.get("excel-data")
+data.save('json', f'{thisdir}/output/cycledata_raw.json', 'mode=w')
+data.meta.save('json', f'{thisdir}/output/cycledatamodel.json', 'mode=w')
+
 inst = CycleData(dims=[len(data.Current)])
-inst.current = data.Current
-inst.voltage = data.Voltage
-inst.time_stamp = data.Test_Time
+inst.battery_current = data.Current
+inst.battery_voltage = data.Voltage
+inst.date_time_stamp = data.Test_Time
 inst.battery_temperature = data.Cell_Temperature
 inst.environment_temperature = data.Environment_Temperature
+
 
 testname = xlsxfile.stem
 coll_processed.add(label=testname, inst=inst)

@@ -1,28 +1,28 @@
 {
-  "ea4f305a-c45a-413e-87d6-440984a38ba3":   {
+  "4c501d68-f1ff-4241-a38f-0d733dafc135":   {
     "meta": "http://onto-ns.com/meta/0.1/BatteryTimeSeriesData",
     "dimensions": {
       "n_measurements": 75
     },
     "properties": {
       "battery_id": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
-      "date_time_stamp": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+      "date_time_stamp": ["11:46:56", "11:47:26", "11:47:33", "11:47:41", "11:47:48", "11:47:55", "11:48:01", "11:48:09", "11:48:16", "11:48:23", "11:48:29", "11:48:37", "11:48:44", "11:48:51", "11:48:57", "11:49:05", "11:49:12", "11:49:19", "11:49:25", "11:49:33", "11:49:40", "11:49:47", "11:49:53", "11:50:01", "11:50:08", "11:50:15", "11:50:21", "11:50:29", "11:50:36", "11:50:43", "11:50:49", "11:50:57", "11:51:04", "11:51:11", "11:51:17", "11:51:25", "11:51:32", "11:51:39", "11:51:45", "11:51:53", "11:52:00", "11:52:07", "11:52:13", "11:52:21", "11:52:28", "11:52:35", "11:52:41", "11:52:49", "11:52:56", "11:53:03", "11:53:09", "11:53:17", "11:53:24", "11:53:31", "11:53:37", "11:53:45", "11:53:52", "11:53:59", "11:54:05", "11:54:13", "11:54:20", "11:54:27", "11:54:33", "11:54:41", "11:54:48", "11:54:55", "11:55:01", "11:55:09", "11:55:16", "11:55:23", "11:55:29", "11:55:37", "11:55:44", "11:55:51", "11:55:57"],
       "test_time": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      "battery_current": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      "battery_voltage": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      "battery_current": [30.014, 59.999, 67.294, 74.303, 81.31, 88.319, 95.294, 102.303, 109.31, 116.319, 123.294, 130.302, 137.311, 144.319, 151.294, 158.302, 165.311, 172.319, 179.294, 186.302, 193.311, 200.319, 207.294, 214.302, 221.311, 228.319, 235.294, 242.302, 249.311, 256.319, 263.295, 270.303, 277.311, 284.319, 291.295, 298.303, 305.311, 312.319, 319.295, 326.303, 333.311, 340.319, 347.295, 354.303, 361.311, 368.319, 375.295, 382.303, 389.311, 396.319, 403.295, 410.303, 417.311, 424.319, 431.295, 438.303, 445.311, 452.319, 459.295, 466.303, 473.311, 480.319, 487.295, 494.303, 501.311, 508.319, 515.294, 522.302, 529.31, 536.318, 543.294, 550.302, 557.31, 564.318, 571.294],
+      "battery_voltage": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
       "battery_temperature": [0, 0, 0.005, 0.015, 0.025, 0.035, 0.045, 0.055, 0.065, 0.074, 0.084, 0.094, 0.104, 0.114, 0.124, 0.134, 0.144, 0.154, 0.164, 0.174, 0.183, 0.193, 0.203, 0.213, 0.223, 0.233, 0.243, 0.253, 0.263, 0.273, 0.282, 0.292, 0.302, 0.312, 0.322, 0.332, 0.342, 0.352, 0.362, 0.371, 0.381, 0.391, 0.401, 0.411, 0.421, 0.431, 0.441, 0.451, 0.46, 0.47, 0.48, 0.49, 0.5, 0.51, 0.52, 0.53, 0.539, 0.549, 0.559, 0.569, 0.579, 0.589, 0.599, 0.609, 0.618, 0.628, 0.638, 0.648, 0.658, 0.668, 0.678, 0.687, 0.697, 0.707, 0.717],
       "battery_temperature_location": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
       "environment_temperature": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       "environment_temperature_source": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     }
   },
-  "40ed5bd1-fc0b-41ed-a82e-fac210e18ed5":   {
+  "8a31a3fa-f900-4324-b2af-a45796dafd04":   {
     "meta": "http://onto-ns.com/meta/0.1/Collection",
     "dimensions": {
       "nrelations": 3
     },
     "properties": {
-      "relations": [["timeseries-mini", "_is-a", "Instance"], ["timeseries-mini", "_has-uuid", "ea4f305a-c45a-413e-87d6-440984a38ba3"], ["timeseries-mini", "_has-meta", "http://onto-ns.com/meta/0.1/BatteryTimeSeriesData"]]
+      "relations": [["timeseries-mini", "_is-a", "Instance"], ["timeseries-mini", "_has-uuid", "4c501d68-f1ff-4241-a38f-0d733dafc135"], ["timeseries-mini", "_has-meta", "http://onto-ns.com/meta/0.1/BatteryTimeSeriesData"]]
     }
   }
 }
