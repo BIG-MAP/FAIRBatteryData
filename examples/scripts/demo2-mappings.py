@@ -78,7 +78,7 @@ ts.add((timeFormat, SKOS.prefLabel, en('timeFormat')))
 ts.add((timeFormat, d['elucidation'],
         en('A time format string according to strptime().')))
 
-# Add TimeStamp subclass for S format
+# Add TimeStamp subclass for times in seconds since start
 TimeStamp_S = BATTINFO['EMMO_fb0da9cf-6b89-5072-bf5a-66e32c8cd6f6']
 d['TimeStamp_S'] = TimeStamp_S
 ts.add((TimeStamp_S, RDF.type, OWL.Class))
@@ -86,7 +86,7 @@ ts.add((TimeStamp_S, RDFS.subClassOf, TimeStamp))
 ts.add((TimeStamp_S, SKOS.prefLabel, en('TimeStamp_S')))
 ts.add((TimeStamp_S, timeFormat, Literal('%S')))
 ts.add((TimeStamp_S, d['elucidation'],
-        en('The time of a data point in seconds from start.')))
+        en('The time of a data point in seconds since start.')))
 
 # Add TimeStamp subclass for HHMMSS format
 TimeStamp_HHMMSS = BATTINFO['EMMO_d14fff96-4fbe-5e1c-920e-d83c926ba179']
@@ -135,14 +135,8 @@ timeconvert_HHMMSS_IRI = ts.add_function(
     func=timeconvert_HHMMSS,
     expects=[d['TimeStamp_HHMMSS']],
     returns=[d['TimeStamp_S']],
-    #base_iri=BATTINFO,
+    base_iri=BATTINFO,
 )
-
-# A repository of available conversion functions
-# TODO: Make this a automatically populated property of Triplestore
-function_repo = {
-    timeconvert_HHMMSS_IRI: timeconvert_HHMMSS,
-}
 
 
 inst = instantiate(
@@ -151,5 +145,9 @@ inst = instantiate(
     triplestore=ts,
     allow_incomplete=True,
     quantity=ureg.Quantity,
-    function_repo=function_repo,
+    function_repo=ts.function_repo,
 )
+
+print()
+print('inst.test_time:')
+print(inst.test_time)
