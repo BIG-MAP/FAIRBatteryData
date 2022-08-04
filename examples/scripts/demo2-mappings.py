@@ -18,6 +18,8 @@ from dlite.mappings import mapping_route
 
 import pint
 
+from scipy import integrate
+
 
 thisdir = Path(__file__).resolve().parent
 entitydir = thisdir.parent / 'entities'
@@ -150,6 +152,18 @@ def timeconvert_HHMMSS(times):
     return timeconvert(times, "%H:%M:%S")
 
 
+def calculate_capacity(test_time, battery_current):
+    
+    battery_capacity = integrate.cumtrapz(test_time, battery_current, initial = 0)
+    
+    return battery_capacity
+
+def calculate_energy(test_time, battery_current, battery_voltage):
+    
+    battery_energy = integrate.cumtrapz(test_time * battery_current, battery_voltage, initial = 0)
+    
+    return battery_energy
+
 # Add ontological description of conversion functions
 timeconvert_HHMMSS_IRI = ts.add_function(
     func=timeconvert_HHMMSS,
@@ -157,6 +171,22 @@ timeconvert_HHMMSS_IRI = ts.add_function(
     returns=[d['TimeStamp_S']],
     base_iri=BATTINFO,
 )
+
+# Calculate capacity
+# calculate_capacity_IRI = ts.add_function(
+#     func = calculate_capacity,
+#     expects=[d['TimeStamp_S'], d['InstantaneousCurrent']],
+#     returns=[d['Capacity']],
+#     base_iri = BATTINFO,
+#     )
+
+# Calculate energy
+calculate_energy_IRI = ts.add_function(
+    func = calculate_energy,
+    expects=[d['TimeStamp_S'], d['InstantaneousCurrent'], d['CellVoltage']],
+    returns=[d['BatteryEnergy']],
+    base_iri = BATTINFO,
+    )
 
 
 # Create BatteryData instance populated via ontological mappings
@@ -171,3 +201,17 @@ inst = instantiate(
 print()
 print('inst.test_time:')
 print(inst.test_time)
+
+print()
+print('inst.battery_current:')
+print(inst.battery_current)
+
+cap = calculate_capacity(inst.test_time, inst.battery_current)
+print()
+print('calcualted capacity')
+print(cap)
+
+ene = calculate_energy(inst.test_time, inst.battery_current, inst.battery_voltage)
+print()
+print('calcualted energy')
+print(ene)
