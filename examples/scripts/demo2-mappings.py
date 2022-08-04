@@ -2,6 +2,7 @@
 This reads the results from demo2-conformToDataModel.py
 """
 import os
+from re import I
 import time
 from pathlib import Path
 
@@ -113,8 +114,9 @@ def timeconvert(times, format):
     The `format` argument specifies the time format in the input.
     See the documentation of time.strptime() for format specification.
     """
+    
     seconds = [
-        time.mktime(time.strptime(t.m if hasattr(t, 'm') else t, format))
+    time.mktime(time.strptime('1970:1:1:'+t.m if hasattr(t, 'm') else '1970:1:1:'+t, format))
         for t in times
     ]
     starttime = seconds[0]
@@ -123,7 +125,7 @@ def timeconvert(times, format):
 
 def timeconvert_HHMMSS(times):
     """Convert timestamps in "HH:MM:SS" format to seconds from start."""
-    return timeconvert(times, "%H:%M:%S")
+    return timeconvert(times, "%Y:%m:%d:%H:%M:%S")
 
 
 # Add ontological description of conversion functions
