@@ -55,7 +55,7 @@ BATTINFO = ts.bind(
 d = {o.value: s for s, o in ts.subject_objects(SKOS.prefLabel)}
 
 
-## TODO: Move below concepts to BattINFO
+## TODO: Move below triples to BattINFO
 
 # Add ontological concept for time stamp
 TimeStamp = BATTINFO['EMMO_d597d7b7-2d35-5d97-9cf1-622b8dfb7d24']
