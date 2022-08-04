@@ -115,7 +115,8 @@ def anytime2seconds(anytime, format):
     See the documentation of time.strptime() for format specification.
     """
     # If `anytime` is a pint.Quantity, only consider the magnitude
-    st = time.strptime(t.m if hasattr(t, 'm') else t, format)
+    st = time.strptime(anytime.m if hasattr(anytime, 'm') else anytime,
+                       format)
 
     # If anytime contains no year it defaults to 1900. But Windows
     # cannot handle times before 1970.  As a workaround, we truncate
@@ -126,7 +127,7 @@ def anytime2seconds(anytime, format):
         st = list(st)
         st[0] = 1970  # year is the first field in struct_time `st`
         seconds_per_year = 31556952
-        return time.mktime(st) - offset*seconds_per_year
+        return time.mktime(tuple(st)) - offset*seconds_per_year
     else:
         return time.mktime(st)
 
@@ -146,7 +147,7 @@ def timeconvert(times, format):
 
 def timeconvert_HHMMSS(times):
     """Convert timestamps in "HH:MM:SS" format to seconds from start."""
-    return timeconvert(times, "%Y:%m:%d:%H:%M:%S")
+    return timeconvert(times, "%H:%M:%S")
 
 
 # Add ontological description of conversion functions
