@@ -107,18 +107,34 @@ ts.add_mapsTo(d['TimeStamp_S'], BatteryData, 'test_time')
 ts.add_mapsTo(d['TimeStamp_HHMMSS'], cycledata.meta, 'Test_Time')
 
 
+def anytime2seconds(anytime, format):
+    """Help function that converts `anytime`, which is a single time datum
+    to number of seconds since 00:00:00 UTC on 1st of january 1970.
+
+    The `format` argument specifies how `anytime` is formatted.
+    See the documentation of time.strptime() for format specification.
+    """
+    # If `anytime` is a pint.Quantity, only consider the magnitude
+    st = time.strptime(t.m if hasattr(t, 'm') else t, format)
+
+    # If anytime contains no year it defaults to 1900. But Windows
+    # cannot handle times before 1970.  As a workaround, we truncate
+    # all times before 1970.
+    if st.tm_year < 1970:
+        st = list(st)
+        st[0] = 1970  # year is the first field in struct_time `st`
+    return time.mktime(st)
+
+
 # Define conversion functions
 def timeconvert(times, format):
+
     """Convert an array of time stamps to seconds since the start.
 
     The `format` argument specifies the time format in the input.
     See the documentation of time.strptime() for format specification.
     """
-    
-    seconds = [
-    time.mktime(time.strptime('1970:1:1:'+t.m if hasattr(t, 'm') else '1970:1:1:'+t, format))
-        for t in times
-    ]
+    seconds = [anytime2seconds(t, format) for t in times]
     starttime = seconds[0]
     return np.array([t - starttime for t in seconds])
 
