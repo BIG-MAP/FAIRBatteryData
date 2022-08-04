@@ -119,11 +119,16 @@ def anytime2seconds(anytime, format):
 
     # If anytime contains no year it defaults to 1900. But Windows
     # cannot handle times before 1970.  As a workaround, we truncate
-    # all times before 1970.
+    # all times before 1970 before calling time.mktime() and then
+    # subtract the offset.
     if st.tm_year < 1970:
+        offset = 1970 - st.tm_year
         st = list(st)
         st[0] = 1970  # year is the first field in struct_time `st`
-    return time.mktime(st)
+        seconds_per_year = 31556952
+        return time.mktime(st) - offset*seconds_per_year
+    else:
+        return time.mktime(st)
 
 
 # Define conversion functions
