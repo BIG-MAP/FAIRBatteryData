@@ -111,16 +111,19 @@ ts.add_mapsTo(d['TimeStamp_HHMMSS'], cycledata.meta, 'Test_Time')
 
 def anytime2seconds(anytime, format):
     """Help function that converts `anytime`, which is a single time datum
-    to number of seconds since 00:00:00 UTC on 1st of january 1970.
+    to number of seconds since EPOCH (normally January 1, 1970, 00:00:00 UTC).
 
     The `format` argument specifies how `anytime` is formatted.
     See the documentation of time.strptime() for format specification.
-    """
-    # If `anytime` is a pint.Quantity, only consider the magnitude
-    st = time.strptime(anytime.m if hasattr(anytime, 'm') else anytime,
-                       format)
 
-    # If anytime contains no year it defaults to 1900. But Windows
+    """
+    # If `anytime` is a pint.Quantity, convert it to seconds
+    if hasattr(anytime, 'm_as'):
+        anytime = anytime.m_as('s')
+
+    st = time.strptime(anytime, format)
+
+    # If anytime contains no year, it defaults to 1900. But Windows
     # cannot handle times before 1970.  As a workaround, we truncate
     # all times before 1970 before calling time.mktime() and then
     # subtract the offset.
@@ -153,19 +156,19 @@ def timeconvert_HHMMSS(times):
 
 
 def calculate_capacity(test_time, battery_current):
-    
+
     battery_capacity = integrate.cumtrapz(test_time, battery_current, initial = 0)
-    
+
     return battery_capacity
 
 def calculate_energy(test_time, battery_current, battery_voltage):
-    
+
     battery_energy = integrate.cumtrapz(test_time * battery_current, battery_voltage, initial = 0)
-    
+
     return battery_energy
 
 # Add ontological description of conversion functions
-timeconvert_HHMMSS_IRI = ts.add_function(
+ts.add_function(
     func=timeconvert_HHMMSS,
     expects=[d['TimeStamp_HHMMSS']],
     returns=[d['TimeStamp_S']],
