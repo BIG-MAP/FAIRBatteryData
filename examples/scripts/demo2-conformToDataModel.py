@@ -7,6 +7,7 @@ First part of demo.
 from pathlib import Path
 import os
 import dlite
+from oteapi.plugins import load_strategies
 from oteapi.datacache import DataCache
 from oteapi_dlite.strategies.parse_excel import DLiteExcelStrategy
 
@@ -17,6 +18,8 @@ thisdir = Path(__file__).resolve().parent
 entitydir = thisdir.parent / 'entities'
 xlsxfile = (thisdir / "../data/BatteryTimeSeriesData" /
            "timeseries-mini.xlsx")
+
+load_strategies()
 
 # Add the content of the xlsxfile to the datacache (like what the
 # download strategy would have done)
