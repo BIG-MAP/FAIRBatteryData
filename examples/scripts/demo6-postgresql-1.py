@@ -31,11 +31,13 @@ ontodir = thisdir.parent / 'ontologies'
 dlite.storage_path.append(f'{entitydir}/BatteryCycleData.json')
 
 # Load dataset
+uri = 'http://onto-ns.com/meta/0.1/BatteryCycleData'
+uuid = 'd14a2726-5e9c-4c25-a48b-05dd3df055c5'
 data = dlite.Instance.from_location(
-    'csv',
-    f'{datadir}/BatteryTimeSeriesData/timeseries-mini.xlsx',
-    'infer=false;meta=http://onto-ns.com/meta/0.1/BatteryCycleData',
+    driver='csv',
+    location=f'{datadir}/BatteryTimeSeriesData/timeseries-mini.xlsx',
+    options=f'infer=false;meta={uri};id={uuid}'
 )
 
 # Save to postgresql DB
-data.save(f'postgresql://{host}?{user=};{database=}')
+data.save(f'postgresql://{host}?user={user};database={database}')

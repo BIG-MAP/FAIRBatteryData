@@ -25,4 +25,11 @@ ontodir = thisdir.parent / 'ontologies'
 dlite.storage_path.append(f'{entitydir}/BatteryCycleData.json')
 
 # Load from postgresql db
-dlite.Instance.from_url(f'postgresql://{host}?{user=};{database=}')
+data = dlite.Instance.from_location(
+    driver='postgresql',
+    location=host,
+    options=f'user={user};database={database}',
+    id='d14a2726-5e9c-4c25-a48b-05dd3df055c5',
+)
+
+print(data)
