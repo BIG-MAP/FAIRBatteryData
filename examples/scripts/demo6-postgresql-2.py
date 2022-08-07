@@ -29,7 +29,7 @@ data = dlite.Instance.from_location(
     driver='postgresql',
     location=host,
     options=f'user={user};database={database}',
-    id='d14a2726-5e9c-4c25-a48b-05dd3df055c5',
+    id = 'timeseries-mini-2012-05-22-no1',
 )
 
 print(data)

@@ -32,11 +32,11 @@ dlite.storage_path.append(f'{entitydir}/BatteryCycleData.json')
 
 # Load dataset
 uri = 'http://onto-ns.com/meta/0.1/BatteryCycleData'
-uuid = 'd14a2726-5e9c-4c25-a48b-05dd3df055c5'
+id = 'timeseries-mini-2012-05-22-no1'  # Give the dataset a human name
 data = dlite.Instance.from_location(
     driver='csv',
     location=f'{datadir}/BatteryTimeSeriesData/timeseries-mini.xlsx',
-    options=f'infer=false;meta={uri};id={uuid}'
+    options=f'infer=false;meta={uri};id={id}',
 )
 
 # Save to postgresql DB
