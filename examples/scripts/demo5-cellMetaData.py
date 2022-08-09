@@ -31,6 +31,9 @@ PE = dlite.Instance.from_url(f'json://{datamodel_path}')
 cell = BatteryCellMetadata(dims=[1], id='sdfs-sdfsdf-sdfsdf-sdfs')
 cell.positive_electrode[0] = PE
 
+# This will work from dlite v0.3.14
+#cell.positive_electrode = [PE]
+
 
 #testname = xlsxfile.stem
 #coll_processed.add(label=testname, inst=inst)
