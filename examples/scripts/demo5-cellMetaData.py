@@ -28,11 +28,8 @@ datamodel_path = os.path.join(entitydir, datamodel)
 PE = dlite.Instance.from_url(f'json://{datamodel_path}')
 
 
-
-cell = BatteryCellMetadata(dims=[1])
-
-#cell.uuid = 'sdfs-sdfsdf-sdfsdf-sdfs'
-cell.positive_electrode = [PE]
+cell = BatteryCellMetadata(dims=[1], id='sdfs-sdfsdf-sdfsdf-sdfs')
+cell.positive_electrode[0] = PE
 
 
 #testname = xlsxfile.stem
