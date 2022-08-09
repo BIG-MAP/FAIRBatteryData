@@ -23,7 +23,7 @@ datamodel = "BatteryCellMetadata.json"
 datamodel_path = os.path.join(entitydir, datamodel)
 BatteryCellMetadata = dlite.Instance.from_url(f'json://{datamodel_path}')
 
-datamodel = "LithiumIonBatteryElectrodeMetadata.json"
+datamodel = "BatteryElectrodeMetadata.json"
 datamodel_path = os.path.join(entitydir, datamodel)
 PE = dlite.Instance.from_url(f'json://{datamodel_path}')
 
