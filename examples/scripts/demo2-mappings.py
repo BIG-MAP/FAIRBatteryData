@@ -163,8 +163,8 @@ def calculate_capacity(test_time, battery_current):
 
 
 def calculate_energy(test_time, battery_current, battery_voltage):
-    battery_energy = integrate.cumtrapz(
-        test_time * battery_current, battery_voltage, initial = 0)
+    battery_energy = integrate.cumulative_trapezoid(
+        battery_current * battery_voltage, test_time, initial=0)
     return battery_energy
 
 
