@@ -29,7 +29,8 @@ PE = dlite.Instance.from_url(f'json://{datamodel_path}')
 
 
 cell = BatteryCellMetadata(dims=[1], id='sdfs-sdfsdf-sdfsdf-sdfs')
-cell.positive_electrode = [PE]
+PE_inst = PE(dims=[1])
+cell.positive_electrode = [PE_inst]
 
 print(cell)
 
