@@ -23,16 +23,16 @@ datamodel = "BatteryCellMetadata.json"
 datamodel_path = os.path.join(entitydir, datamodel)
 BatteryCellMetadata = dlite.Instance.from_url(f'json://{datamodel_path}')
 
-#datamodel = "LithiumIonBatteryElectrodeMetadata.json"
-#datamodel_path = os.path.join(entitydir, datamodel)
-#PE = dlite.Instance.from_url(f'json://{datamodel_path}?mode=r')
+datamodel = "BatteryElectrodeMetadata.json"
+datamodel_path = os.path.join(entitydir, datamodel)
+PE = dlite.Instance.from_url(f'json://{datamodel_path}')
+
+cell = BatteryCellMetadata(dims=[1], id='sdfs-sdfsdf-sdfsdf-sdfs')
+PE_inst = PE(dims=[1])
+cell.positive_electrode = [PE_inst]
 
 
-
-cell = BatteryCellMetadata([1])
-#cell.uuid = 'sdfs-sdfsdf-sdfsdf-sdfs'
-#cell.positive_electrode = data.Voltage
-
+print(cell)
 
 #testname = xlsxfile.stem
 #coll_processed.add(label=testname, inst=inst)
@@ -40,4 +40,3 @@ cell = BatteryCellMetadata([1])
 cell.save('json', f'{thisdir}/output/cell_metadata_instance.json', 'mode=w')
 #coll_processed.save('json', f'{thisdir}/output/cycledata_collection_processed.json', 'mode=w')
 
-print(cell)
