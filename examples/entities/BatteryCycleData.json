@@ -1,0 +1,76 @@
+{
+  "uri": "http://onto-ns.com/meta/0.1/BatteryCycleData",
+  "description": "Metadata for timeseries of battery cycle experiments.",
+  "dimensions": [
+    {
+      "name": "rows",
+      "description": "Number of rows."
+    }
+  ],
+  "properties": [
+    {
+      "name": "Date_Time",
+      "type": "string",
+      "dims": ["rows"]
+    },
+    {
+      "name": "Test_Time",
+      "type": "string",
+      "dims": ["rows"],
+      "unit": "s"
+    },
+    {
+      "name": "Cycle_Index",
+      "type": "int64",
+      "dims": ["rows"]
+    },
+    {
+      "name": "Current",
+      "type": "float64",
+      "dims": ["rows"],
+      "unit": "A"
+    },
+    {
+      "name": "Voltage",
+      "type": "int64",
+      "dims": ["rows"],
+      "unit": "V"
+    },
+    {
+      "name": "Charge_Capacity",
+      "type": "float64",
+      "dims": ["rows"],
+      "unit": "Ah"
+    },
+    {
+      "name": "Discharge_Capacity",
+      "type": "float64",
+      "dims": ["rows"],
+      "unit": "Ah"
+    },
+    {
+      "name": "Charge_Energy",
+      "type": "int64",
+      "dims": ["rows"],
+      "unit": "Wh"
+    },
+    {
+      "name": "Discharge_Energy",
+      "type": "float64",
+      "dims": ["rows"],
+      "unit": "Wh"
+    },
+    {
+      "name": "Environment_Temperature",
+      "type": "int64",
+      "dims": ["rows"],
+      "unit": "C"
+    },
+    {
+      "name": "Cell_Temperature",
+      "type": "float64",
+      "dims": ["rows"],
+      "unit": "C"
+    }
+  ]
+}
