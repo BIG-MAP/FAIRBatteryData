@@ -105,6 +105,8 @@ ts.add((TimeStamp_HHMMSS, d['elucidation'],
 # Add mappings
 ts.add_mapsTo(d['InstantaneousCurrent'], BatteryData, 'battery_current')
 ts.add_mapsTo(d['InstantaneousCurrent'], cycledata.meta, 'Current')
+ts.add_mapsTo(d['CellVoltage'], BatteryData, 'battery_voltage')
+ts.add_mapsTo(d['CellVoltage'], cycledata.meta, 'Voltage')
 ts.add_mapsTo(d['TimeStamp_S'], BatteryData, 'test_time')
 ts.add_mapsTo(d['TimeStamp_HHMMSS'], cycledata.meta, 'Test_Time')
 
@@ -139,7 +141,6 @@ def anytime2seconds(anytime, format):
 
 # Define conversion functions
 def timeconvert(times, format):
-
     """Convert an array of time stamps to seconds since the start.
 
     The `format` argument specifies the time format in the input.
@@ -156,16 +157,16 @@ def timeconvert_HHMMSS(times):
 
 
 def calculate_capacity(test_time, battery_current):
-
-    battery_capacity = integrate.cumtrapz(test_time, battery_current, initial = 0)
-
+    battery_capacity = integrate.cumtrapz(
+        test_time, battery_current, initial = 0)
     return battery_capacity
 
+
 def calculate_energy(test_time, battery_current, battery_voltage):
-
-    battery_energy = integrate.cumtrapz(test_time * battery_current, battery_voltage, initial = 0)
-
+    battery_energy = integrate.cumulative_trapezoid(
+        battery_current * battery_voltage, test_time, initial=0)
     return battery_energy
+
 
 # Add ontological description of conversion functions
 ts.add_function(
@@ -176,12 +177,12 @@ ts.add_function(
 )
 
 # Calculate capacity
-# calculate_capacity_IRI = ts.add_function(
-#     func = calculate_capacity,
-#     expects=[d['TimeStamp_S'], d['InstantaneousCurrent']],
-#     returns=[d['Capacity']],
-#     base_iri = BATTINFO,
-#     )
+calculate_capacity_IRI = ts.add_function(
+    func = calculate_capacity,
+    expects=[d['TimeStamp_S'], d['InstantaneousCurrent']],
+    returns=[d['Capacity']],
+    base_iri = BATTINFO,
+)
 
 # Calculate energy
 calculate_energy_IRI = ts.add_function(
@@ -189,7 +190,7 @@ calculate_energy_IRI = ts.add_function(
     expects=[d['TimeStamp_S'], d['InstantaneousCurrent'], d['CellVoltage']],
     returns=[d['BatteryEnergy']],
     base_iri = BATTINFO,
-    )
+)
 
 
 # Create BatteryData instance populated via ontological mappings
@@ -214,7 +215,8 @@ print()
 print('calcualted capacity')
 print(cap)
 
-ene = calculate_energy(inst.test_time, inst.battery_current, inst.battery_voltage)
+ene = calculate_energy(
+    inst.test_time, inst.battery_current, inst.battery_voltage)
 print()
 print('calcualted energy')
 print(ene)

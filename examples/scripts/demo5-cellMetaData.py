@@ -31,7 +31,6 @@ cell = BatteryCellMetadata(dims=[1], id='sdfs-sdfsdf-sdfsdf-sdfs')
 PE_inst = PE(dims=[1])
 cell.positive_electrode = [PE_inst]
 
-
 print(cell)
 
 #testname = xlsxfile.stem
