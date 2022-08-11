@@ -17,6 +17,18 @@
             "description": "UUID of the battery cell"
         },
         {
+            "name": "name",
+            "type": "string",
+            "dims": ["N"],
+            "description": "name of the battery cell"
+        },
+        {
+            "name": "manufacturer",
+            "type": "string",
+            "dims": ["N"],
+            "description": "name of the organization that manufacturerd the battery cell"
+        },
+        {
             "name": "positive_electrode",
             "type": "ref",
             "$ref": "http://onto-ns.com/meta/0.1/BatteryElectrodeMetadata",
@@ -50,48 +62,6 @@
             "$ref": "http://onto-ns.com/meta/0.1/BatteryCasingMetadata",
             "dims": ["N"],
             "description": "cell casing metadata"
-        },
-        {
-            "name": "nominal_capacity",
-            "type": "float",
-            "dims": ["N"],
-            "unit": "A*h",
-            "description": "Nominal electric charge capacity of the battery, in ampere-hours (Ah)"
-        },
-        {
-            "name": "nominal_voltage",
-            "type": "float",
-            "dims": ["N"],
-            "unit": "A*h",
-            "description": "Nominal discharge voltage of the battery, in volt (V)"
-        },
-        {
-            "name": "nominal_energy_density",
-            "type": "float",
-            "dims": ["N"],
-            "unit": "W*h/L",
-            "description": "Nominal discharge energy density of the battery, in watt-hours per litre (Wh/L)"
-        },
-        {
-            "name": "nominal_specific_energy",
-            "type": "float",
-            "dims": ["N"],
-            "unit": "W*h/kg",
-            "description": "Nominal discharge specific energy of the battery, in watt-hours per kilogram (Wh/kg)"
-        },
-        {
-            "name": "mass",
-            "type": "float",
-            "dims": ["N"],
-            "unit": "kg",
-            "description": "Mass of the battery cell, in kilograms (kg)."
-        },
-        {
-            "name": "volume",
-            "type": "float",
-            "dims": ["N"],
-            "unit": "L",
-            "description": "Volume of the battery cell, in litre (L)."
         }
     ]
 }
