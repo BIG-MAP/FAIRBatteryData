@@ -13,19 +13,16 @@
         {
             "name": "uuid",
             "type": "string",
-            "dims": ["N"],
             "description": "UUID of the battery cell"
         },
         {
             "name": "name",
             "type": "string",
-            "dims": ["N"],
             "description": "name of the battery cell"
         },
         {
             "name": "manufacturer",
             "type": "string",
-            "dims": ["N"],
             "description": "name of the organization that manufacturerd the battery cell"
         },
         {
