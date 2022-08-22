@@ -220,3 +220,5 @@ ene = calculate_energy(
 print()
 print('calcualted energy')
 print(ene)
+
+inst.save('json', f'{thisdir}/output/cycledata_instance_mapped.json', 'mode=w')

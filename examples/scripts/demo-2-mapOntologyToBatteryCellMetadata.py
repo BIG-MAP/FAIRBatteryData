@@ -28,18 +28,24 @@ entitydir = thisdir.parent / 'entities'
 outputdir = thisdir / 'output'
 ontodir = thisdir.parent / 'ontologies'
 
-cell = dlite.Instance.from_location(
-    'json', f'{thisdir}/output/battery_cell_metadata.json', 'mode=r')
+coll = dlite.Collection.from_location('json', f'{thisdir}/output/cell_collection.json', 'mode=r', id='5524e037-58f1-5e8c-bc68-7ce67f8d117a')
 
-ts = Triplestore("rdflib")
-ts.parse(f"{ontodir}/battinfo-merged.ttl")
+# cell = dlite.Instance.from_location(
+#     'json', f'{thisdir}/output/battery_cell_metadata.json', 'mode=r')
 
-# BattINFO namespace
-BATTINFO = ts.bind(
-    'battinfo', 'https://big-map.github.io/BattINFO/ontology/BattINFO#')
+# ts = Triplestore("rdflib")
+# ts.parse(f"{ontodir}/battinfo-merged.ttl")
 
-# Dict mapping prefLabel to IRI
-# TODO: we should add more convenient support for handling prefLabel
-d = {o.value: s for s, o in ts.subject_objects(SKOS.prefLabel)}
+# # BattINFO namespace
+# BATTINFO = ts.bind(
+#     'battinfo', 'https://big-map.github.io/BattINFO/ontology/BattINFO#')
 
-ts.add_mapsTo(d['Electrode'], cell, 'positive_electrode')
+# # Dict mapping prefLabel to IRI
+# # TODO: we should add more convenient support for handling prefLabel
+# d = {o.value: s for s, o in ts.subject_objects(SKOS.prefLabel)}
+
+# ts.add_mapsTo(d['Electrode'], coll, 'positive_electrode')
+# ts.add_mapsTo(d['Electrode'], coll, 'negative_electrode')
+# ts.add_mapsTo(d['Electrolyte'], coll, 'electrolyte')
+# ts.add_mapsTo(d['Separator'], coll, 'separator')
+# ts.add_mapsTo(d['BatteryCellContainer'], coll, 'casing')
