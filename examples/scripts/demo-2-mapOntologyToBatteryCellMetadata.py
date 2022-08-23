@@ -28,6 +28,8 @@ entitydir = thisdir.parent / 'entities'
 outputdir = thisdir / 'output'
 ontodir = thisdir.parent / 'ontologies'
 
+dlite.storage_path.append(entitydir / '*.json')
+
 coll = dlite.Collection.from_location('json', f'{thisdir}/output/cell_collection.json', 'mode=r', id='5524e037-58f1-5e8c-bc68-7ce67f8d117a')
 
 # cell = dlite.Instance.from_location(
