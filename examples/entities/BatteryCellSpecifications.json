@@ -1,0 +1,90 @@
+{
+    "name": "BatteryCellMetadata",
+    "version": "0.1",
+    "namespace": "http://onto-ns.com/meta",
+    "description": "A description of battery cell metadata",
+    "dimensions": [
+        {
+            "name": "N",
+            "description": "Number of battery cells"
+        }
+    ],
+    "properties": [
+        {
+            "name": "state_of_health",
+            "type": "float",
+            "dims": ["N"],
+            "description": "battery state of health (measured capacity / capacity at beginning of life) at which the rating was performed."
+        },
+        {
+            "name": "specified_capacity",
+            "type": "float",
+            "dims": ["N"],
+            "unit": "A*h",
+            "description": "specified electric charge capacity of the battery, in ampere-hours (Ah)"
+        },
+        {
+            "name": "specified_discharging_voltage",
+            "type": "float",
+            "dims": ["N"],
+            "unit": "V",
+            "description": "specified discharge voltage of the battery, in volt (V)"
+        },
+        {
+            "name": "specified_charging_voltage",
+            "type": "float",
+            "dims": ["N"],
+            "unit": "V",
+            "description": "specified discharge voltage of the battery, in volt (V)"
+        },
+        {
+            "name": "maximum_charging_current",
+            "type": "float",
+            "dims": ["N"],
+            "unit": "A",
+            "description": "specified discharge voltage of the battery, in volt (V)"
+        },
+        {
+            "name": "maximum_discharging_current",
+            "type": "float",
+            "dims": ["N"],
+            "unit": "A",
+            "description": "specified discharge voltage of the battery, in volt (V)"
+        },
+        {
+            "name": "discharging_cutoff_voltage",
+            "type": "float",
+            "dims": ["N"],
+            "unit": "V",
+            "description": "specified discharge voltage of the battery, in volt (V)"
+        },
+        {
+            "name": "cell_mass",
+            "type": "float",
+            "dims": ["N"],
+            "unit": "kg",
+            "description": "Mass of the battery cell, in kilograms (kg)."
+        },
+        {
+            "name": "cell_volume",
+            "type": "float",
+            "dims": ["N"],
+            "unit": "L",
+            "description": "Volume of the battery cell, in litre (L)."
+        },
+        {
+            "name": "specified_energy_density",
+            "type": "float",
+            "dims": ["N"],
+            "unit": "W*h/L",
+            "description": "specified discharge energy density of the battery, in watt-hours per litre (Wh/L)"
+        },
+        {
+            "name": "specified_specific_energy",
+            "type": "float",
+            "dims": ["N"],
+            "unit": "W*h/kg",
+            "description": "specified discharge specific energy of the battery, in watt-hours per kilogram (Wh/kg)"
+        }
+    ]
+}

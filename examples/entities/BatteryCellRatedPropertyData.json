@@ -1,0 +1,62 @@
+{
+    "name": "BatteryCellMetadata",
+    "version": "0.1",
+    "namespace": "http://onto-ns.com/meta",
+    "description": "A description of battery cell metadata",
+    "dimensions": [
+        {
+            "name": "N",
+            "description": "Number of battery cells"
+        }
+    ],
+    "properties": [
+        {
+            "name": "state_of_health",
+            "type": "float",
+            "dims": ["N"],
+            "description": "battery state of health (measured capacity / capacity at beginning of life) at which the rating was performed."
+        },
+        {
+            "name": "capacity",
+            "type": "float",
+            "dims": ["N"],
+            "unit": "A*h",
+            "description": "rated electric charge capacity of the battery, in ampere-hours (Ah)"
+        },
+        {
+            "name": "rated_voltage",
+            "type": "float",
+            "dims": ["N"],
+            "unit": "A*h",
+            "description": "rated discharge voltage of the battery, in volt (V)"
+        },
+        {
+            "name": "rated_energy_density",
+            "type": "float",
+            "dims": ["N"],
+            "unit": "W*h/L",
+            "description": "rated discharge energy density of the battery, in watt-hours per litre (Wh/L)"
+        },
+        {
+            "name": "rated_specific_energy",
+            "type": "float",
+            "dims": ["N"],
+            "unit": "W*h/kg",
+            "description": "rated discharge specific energy of the battery, in watt-hours per kilogram (Wh/kg)"
+        },
+        {
+            "name": "mass",
+            "type": "float",
+            "dims": ["N"],
+            "unit": "kg",
+            "description": "Mass of the battery cell, in kilograms (kg)."
+        },
+        {
+            "name": "volume",
+            "type": "float",
+            "dims": ["N"],
+            "unit": "L",
+            "description": "Volume of the battery cell, in litre (L)."
+        }
+    ]
+}

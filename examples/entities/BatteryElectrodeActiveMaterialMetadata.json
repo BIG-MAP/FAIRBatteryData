@@ -16,13 +16,19 @@
             "description": "Conventional name of the active material. Valid entries are: LCO, LFP, LNMO, LMO, NMC, Graphite, Silicon, LTO, other, or unknown"
         },
         {
+            "name": "molecular_weight",
+            "type": "string",
+            "unit": "g/mol",
+            "description": "Conventional name of the active material. Valid entries are: LCO, LFP, LNMO, LMO, NMC, Graphite, Silicon, LTO, other, or unknown"
+        },
+        {
             "name": "specific_capacity",
             "type": "float",
             "unit": "A*h/kg",
             "description": "Specific electric charge capacity of the material."
         },
         {
-            "name": "density",
+            "name": "crystal_density",
             "type": "float",
             "unit": "kg/(m**3)",
             "description": "Density of the material."

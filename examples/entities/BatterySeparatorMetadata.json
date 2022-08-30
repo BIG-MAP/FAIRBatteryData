@@ -21,13 +21,13 @@
             "description": "molecuar entity comprising the layer material"
         },
         {
-            "name": "surfactant_coated",
-            "type": "sting",
+            "name": "coated",
+            "type": "string",
             "description": "indicates the presence of a surfactant"
         },
         {
             "name": "laminated",
-            "type": "sting",
+            "type": "string",
             "description": "indicates the presence of a laminated structure"
         },
         {
@@ -60,12 +60,12 @@
             "description": "Thickness of the separator"
         },
         {
-            "name": "nominal_porosity",
+            "name": "porosity",
             "type": "float",
             "description": "Nominal porosity (void volume fraction) for the separator"
         },
         {
-            "name": "nominal_tortuosity",
+            "name": "tortuosity",
             "type": "float",
             "description": "Nominal tortuosity for the separator"
         }

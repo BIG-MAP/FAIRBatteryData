@@ -17,7 +17,7 @@ import dlite
 
 # Database setup
 host = 'postgres.sintef.no'
-user = 'jesperf@sintef.no'  # Change this line to your username
+user = 'simonc@sintef.no'  # Change this line to your username
 database = 'jesperf-bigmap'
 
 # Paths
