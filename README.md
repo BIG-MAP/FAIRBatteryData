@@ -13,8 +13,10 @@ BattINFO is a free, open-source domain ontology for batteries developed beneath 
 `git clone https://github.com/BIG-MAP/BattINFO.git`
 
 There are two tools we recommend to explore and use the ontology. The first is the free tool Protégé, developed by Stanford University. Protégé, provides an easy-to-use interface to explore and edit terms in the ontology. It is available for download using the following link: https://protege.stanford.edu/products.php#desktop-protege 
-<br>
-The second tool we recommend is a python package for working with EMMO and its associated domain ontologies called EMMOntoPy. It can be installed using the following command: <br>
+
+
+The second tool we recommend is a python package for working with EMMO and its associated domain ontologies called EMMOntoPy. It can be installed using the following command:
+
 `pip install EMMOntoPy` 
 
 ## DLite
