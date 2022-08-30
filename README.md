@@ -1,2 +1,4 @@
 # FAIRBatteryData
 This repository demonstrates a working proof-of-concept for how the Battery Interface Ontology (BattINFO) can be used to create semantically annotated battery data. Achieving this objective means developing not only the ontology itself, but also the associated data models and RDF triple mapping and querying infrastructure needed to perform practical actions on real battery datasets. In this first use-case, we create battery cell metadata for a cell that has been reported in the literature and link it with simulated time-series data obtained from the open-source Battery Modelling Toolbox (BattMo). The resulting metadata are mapped to BattINFO terms using RDF triples and saved in a triplestore. We demonstrate a simple semantic query of the triplestore using SPARQL.
+
+![image](https://user-images.githubusercontent.com/52653938/187467697-2d9025ea-8693-43d4-b242-bb248ace6849.png)
