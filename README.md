@@ -20,5 +20,7 @@ The second tool we recommend is a python package for working with EMMO and its a
 ## DLite
 To create mappings between ontological terms and actual data sets, we use a lightweight data-centric framework for semantic interoperability called DLite. DLite is a C implementation of the SINTEF Open Framework and Tools (SOFT), which is a set of concepts and tools for how to efficiently describe and work with scientific data.
 If you are using Python, the easiest way to install DLite is with pip: <br>
+
 `pip install DLite-Python`
+
 Note, currently only Linux versions for Python 3.7, 3.8, 3.9 and 3.10 are available. But Windows versions will soon be available.
