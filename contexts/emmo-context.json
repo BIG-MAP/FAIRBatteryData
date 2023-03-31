@@ -1,0 +1,39 @@
+{
+    "@context":
+    {
+        "skos": "http://www.w3.org/2004/02/skos/core#",
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+        "dcterms": "http://purl.org/dc/terms/",
+        "emmo": "http://emmo.info/emmo#",
+        "echem": "http://emmo.info/electrochemistry#",
+        "battery": "http://emmo.info/battery#",
+        "label": "skos:prefLabel",
+        "hasQuantitativeProperty":
+        {
+            "@id": "http://emmo.info/emmo#EMMO_0aa934ee_1ad4_4345_8a7f_bc73ec67c7e5",
+            "@type": "@id"
+        },
+        "hasConventionalQuantity": 
+        {
+            "@id": "http://emmo.info/emmo#EMMO_16b510a6_0584_4134_bdb6_3bc185c17860",
+            "@type": "@id"
+        },
+        "hasModelledQuantity": 
+        {
+            "@id": "http://emmo.info/emmo#EMMO_b8f79e53_2ad4_441d_87ff_284a5c419e46",
+            "@type": "@id"
+        },
+        "hasMeasuredQuantity":
+        {
+            "@id": "http://emmo.info/emmo#EMMO_fd689787_31b0_41cf_bf03_0d69af76469d",
+            "@type": "@id"
+        },
+        "hasQuantityValue": "http://emmo.info/emmo#EMMO_8ef3cd6d_ae58_4a8d_9fc0_ad8f49015cd0",
+        "hasReferenceUnit":
+        {
+            "@id": "http://emmo.info/emmo#EMMO_67fc0a36_8dcb_4ffa_9a43_31074efa3296",
+            "@type": "@id"
+        }
+    }
+ }
+ 
