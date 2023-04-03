@@ -95,7 +95,7 @@ def extract_pref_labels(g):
     return pref_labels
 
 prefLabels = extract_pref_labels(graph)
-st.write(prefLabels.values())
+#st.write(prefLabels.values())
 #st.write(uri_label_dict.keys())
 
 # Define the graph visualization
@@ -116,7 +116,6 @@ for s, p, o in graph:
             node_label = re.search(r'#(\w+)', target).group(1)
         
         if node_label == 'SimonClark':
-            st.write("top entry")
             image_url = 'https://raw.githubusercontent.com/BIG-MAP/FAIRBatteryData/json-ld/app/images/simon.clark-sintef.no.jpg'
             nodes.append(Node(id = target, label = node_label, shape="circularImage", image=image_url))
         else:

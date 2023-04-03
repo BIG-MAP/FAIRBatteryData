@@ -7,7 +7,10 @@
     "battery": "http://emmo.info/battery#",
     "bkb": "http://emmo.info/battery_knowledge_base#",
     "value": "@value",
-    "creator": "http://purl.org/dc/terms/creator",
+    "creator": {
+      "@id": "http://purl.org/dc/terms/creator",
+      "@type": "@id"
+    },
     "hasPart": {
       "@id": "emmo:hasPart",
       "@type": "@id"
