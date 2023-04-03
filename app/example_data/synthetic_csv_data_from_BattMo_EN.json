@@ -1,0 +1,66 @@
+{
+  "@context":{
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "emmo": "http://emmo.info/emmo#",
+    "echem": "http://emmo.info/electrochemistry#",
+    "battery": "http://emmo.info/battery#",
+    "bkb": "http://emmo.info/battery_knowledge_base#",
+    "value": "@value",
+    "creator": {
+      "@id": "http://purl.org/dc/terms/creator",
+      "@type": "@id"
+    },
+    "hasPart": {
+      "@id": "emmo:hasPart",
+      "@type": "@id"
+    },
+    "hasQuantitativeProperty": {
+      "@id":"emmo:hasQuantitativeProperty", 
+        "@type": "@id"
+    },
+    "hasQuantityValue": {
+      "@id":"emmo:hasQuantityValue"
+    },
+    "hasReferenceUnit": {
+      "@id":"emmo:hasReferenceUnit", 
+      "@type": "@id"
+    },
+    "hasFileIndex": {
+      "@id":"emmo:hasFileIndex"
+    }
+  },
+  "@id": "https://zenodo.org/record/7299473",
+  "@type": "emmo:CSV",
+  "skos:prefLabel": "synthetic_csv_data_from_BattMo_en",
+  "creator": "https://github.com/BIG-MAP/BatteryExpertKnowledgeGraph/ontology/BatteryExperts#1e7a3e32-475f-43ed-a85f-9aacb8c9296d",
+    "hasPart": {
+      "@id": "bkb:syntheic_data_result_example_1",
+      "@type": "battery:BatteryCyclingMeasurementResult"
+      },
+    "hasQuantitativeProperty": [ {
+        "@id": "bkb:example_1_current",
+        "@type": "echem:CellCurrent",
+        "hasReferenceUnit": {
+            "@id": "emmo:Ampere"
+        },
+        "hasFileIndex": "Current / A"
+    },
+    {
+        "@id": "bkb:example_1_time",
+        "@type": "echem:TestTime",
+        "hasReferenceUnit": {
+            "@id": "emmo:Second"
+        },
+        "hasFileIndex": "Time / s"
+    },
+    {
+        "@id": "bkb:example_1_voltage",
+        "@type": "echem:CellVoltage",
+        "hasReferenceUnit": {
+            "@id": "emmo:Volt"
+        },
+        "hasFileIndex": "Voltage / V"
+    }]
+}
+

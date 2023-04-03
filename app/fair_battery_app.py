@@ -9,6 +9,7 @@ import plotly.graph_objects as go
 from pathlib import Path
 import os
 import streamlit_ace
+import re
 
 import plotly.express as px
 
@@ -20,7 +21,7 @@ import networkx as nx
 from bokeh.models import Circle, MultiLine
 from bokeh.plotting import figure, from_networkx, show
 from collections import defaultdict
-from rdflib import Graph, URIRef, Namespace
+from rdflib import Graph, URIRef, Namespace, Literal
 from rdflib.namespace import RDF, RDFS, SKOS
 from streamlit_agraph import agraph, TripleStore, Node, Edge, Config
 from rdflib.plugins.sparql import prepareQuery
@@ -28,8 +29,49 @@ from rdflib.plugins.sparql import prepareQuery
 import pandas as pd
 import requests
 
+def load_ontology():
+    emmo = 'https://emmo-repo.github.io/versions/1.0.0-beta3/emmo-inferred.ttl'
+    quantities = 'https://raw.githubusercontent.com/emmo-repo/domain-electrochemistry/master/isq_bigmap_temp.ttl'
+    cs = 'https://raw.githubusercontent.com/emmo-repo/domain-electrochemistry/master/computerscience_bigmap_temp.ttl'
+    electrochemical_quantities = 'https://raw.githubusercontent.com/emmo-repo/domain-electrochemistry/master/electrochemicalquantities.ttl'
+    electrochemistry = 'https://raw.githubusercontent.com/emmo-repo/domain-electrochemistry/master/electrochemistry.ttl'
+    battery_quantities = 'https://raw.githubusercontent.com/emmo-repo/domain-battery/master/batteryquantities.ttl'
+    battery = 'https://raw.githubusercontent.com/emmo-repo/domain-battery/master/battery.ttl'
+
+    kg_path_mod = 'https://raw.githubusercontent.com/BIG-MAP/FAIRBatteryData/json-ld/app/kg-battery-mod.ttl'
+    experts = 'https://raw.githubusercontent.com/BIG-MAP/FAIRBatteryData/json-ld/app/BatteryExperts.ttl'
+
+    g= Graph()
+    g.parse(emmo, format='ttl')
+    g.parse(quantities, format='ttl')
+    g.parse(cs, format='ttl')
+    g.parse(electrochemical_quantities, format='ttl')
+    g.parse(electrochemistry, format='ttl')
+    g.parse(battery_quantities, format='ttl')
+    g.parse(battery, format='ttl')
+    g.parse(kg_path_mod, format='ttl')
+    g.parse(experts, format='ttl')
+    
+    # Create a dictionary to hold the mappings
+    label_uri_dict = {}
+    uri_label_dict = {}
+
+    # Iterate through all the triples in the graph
+    for subj, pred, obj in g:
+        # Check if the predicate is `skos:prefLabel`
+        if pred == SKOS.prefLabel and isinstance(obj, Literal):
+            # Store the URI and prefLabel in the dictionary
+            label_uri_dict[obj.value] = subj
+            uri_label_dict[str(subj)] = obj.value
+            
+    return g, label_uri_dict, uri_label_dict
+
 
 st.title('FAIR Battery Data Demo')
+
+g, label_uri_dict, uri_label_dict = load_ontology()
+
+st.write(label_uri_dict['SimonClark'])
 
 thisdir = Path(__file__).resolve().parent 
 knowledgedir = thisdir
@@ -40,40 +82,6 @@ kg_path_mod = f"{knowledgedir}/kg-battery-mod.ttl"
 graph = rdflib.Graph()
 graph.parse(kg_path_mod, format="ttl")
 
-
-# # Define the OWL namespace
-# OWL = Namespace("http://www.w3.org/2002/07/owl#")
-
-# # Prepare the SPARQL query to select all owl:imports statements
-# q = prepareQuery(
-#     """
-#     SELECT ?import_uri
-#     WHERE {
-#         ?ontology_uri <%simports> ?import_uri .
-#     }
-#     """ % OWL,
-#     initNs={"owl": OWL}
-# )
-
-# # Create a set to store the URIs of all imported ontologies
-# imported_uris = set()
-
-# # Iterate over the results of the SPARQL query
-# for row in graph.query(q):
-#     import_uri = row["import_uri"]
-#     if isinstance(import_uri, URIRef):
-#         imported_uris.add(import_uri)
-
-# for uri in imported_uris:
-#     st.write(uri)
-
-# # Load all the imported ontologies into the rdflib Graph object
-# for import_uri in imported_uris:
-#     graph.parse(str(import_uri))
-
-
-
-
 def extract_pref_labels(g):
     pref_labels = {}
     for s, p, o in g:
@@ -83,10 +91,9 @@ def extract_pref_labels(g):
             pref_labels[str(s)] = str(o)
     return pref_labels
 
-
-
 prefLabels = extract_pref_labels(graph)
 st.write(prefLabels.values())
+#st.write(uri_label_dict.keys())
 
 # Define the graph visualization
 nodes = []
@@ -96,13 +103,29 @@ seen_nodes = set()
 for s, p, o in graph:
     source = str(s)
     target = str(o)
+    predicate = str(p)
     if isinstance(o, URIRef) and target not in seen_nodes:
-        nodes.append(Node(id = target))
+        if target in uri_label_dict.keys():
+            node_label = uri_label_dict[target]
+        else:
+            node_label = ""
+        
+        nodes.append(Node(id = target, label = node_label))
         seen_nodes.add(target)
     if source not in seen_nodes:
-        nodes.append(Node(id = source))
+        if source in uri_label_dict:
+            node_label = uri_label_dict[source]
+        else:
+            node_label = ""
+        
+        nodes.append(Node(id = source, label = node_label))
         seen_nodes.add(source)
-    edges.append( Edge( source=source, target = target))
+    
+    if predicate in uri_label_dict:
+        edge_label = uri_label_dict[predicate]
+    else:
+        edge_label = re.search(r'#(\w+)', predicate).group(1)
+    edges.append( Edge( source=source, target = target, label = edge_label))
 
 
 config = Config(width=750,
@@ -110,114 +133,72 @@ config = Config(width=750,
                 directed=True, 
                 physics=True, 
                 hierarchical=False,
-                edge_labels = False
                 # **kwargs
                 )
 
-# Render the graph
-agraph(nodes=nodes, edges=edges, config=config)
+ag = agraph(nodes=nodes, edges=edges, config=config)
 
+# node_dict = {n.id: n for n in nodes}
+# selected_node_id = st.selectbox("Select a node", options=node_dict)
 
-
-
-
-
-
-
-
-
-
-
+# # Render the graph
 # nodes = []
 # edges = []
-# nodes.append( Node(id="Spiderman", 
-#                    label="Peter Parker", 
-#                    size=25, 
-#                    shape="circularImage",
-#                    image="http://marvel-force-chart.surge.sh/marvel_force_chart_img/top_spiderman.png") 
-#             ) # includes **kwargs
-# nodes.append( Node(id="Captain_Marvel", 
-#                    size=25,
-#                    shape="circularImage",
-#                    image="http://marvel-force-chart.surge.sh/marvel_force_chart_img/top_captainmarvel.png") 
-#             )
-# edges.append( Edge(source="Captain_Marvel", 
-#                    label="friend_of", 
-#                    target="Spiderman", 
-#                    # **kwargs
-#                    ) 
-#             ) 
+# seen_nodes = set()
 
-# config = Config(width=750,
-#                 height=950,
-#                 directed=True, 
-#                 physics=True, 
-#                 hierarchical=False,
-#                 # **kwargs
-#                 )
+# for s, p, o in graph:
+#     source = str(s)
+#     target = str(o)
+#     if isinstance(o, URIRef) and target not in seen_nodes and target == selected_node_id:
+#         nodes.append(Node(id = target))
+#         seen_nodes.add(target)
+#     if source not in seen_nodes and source == selected_node_id:
+#         nodes.append(Node(id = source))
+#         seen_nodes.add(source)
+#     edges.append( Edge( source=source, target = target))
 
-# return_value = agraph(nodes=nodes, 
-#                       edges=edges, 
-#                       config=config)
+# selected_node = nodes
 
 
 
+# for edge in edges:
+#     #st.write(dir(edge))
+#     st.write(edge.to)
+#     if edge.to == selected_node:
+#         st.write("selected node is target")
+#         nodes.append(edge.source)
+#     elif edge.source == selected_node:
+#         st.write("selected node is source")
+#         nodes.append(edge.to)
+
+# st.write(nodes)
+# st.write(edges)
+
+# # node_dict = {n.id: n for n in nodes}
+# # seen_nodes = set()
+# # selected_node_id = st.selectbox("Select a node", options=node_dict)
+# # selected_node = [n for n in nodes if n.id == selected_node_id][0]
+# # st.write(selected_node)
+# # seen_nodes.add(selected_node)
 
 
+# # selected_edges = [e for e in edges if e.source == selected_node]
+# # for edge in edges:
+# #     #st.write(dir(edge))
+# #     if edge.to == selected_node:
+# #         selected_edges.append(edge)
 
+# # selected_nodes = [Node(selected_node)]
+# # for edge in selected_edges:
+# #     target_node = Node(edge.to)
+# #     if target_node not in seen_nodes:
+# #         selected_nodes.append(target_node)
+# #         seen_nodes.add(target_node)
+    
+    
+# # agraph(nodes=selected_nodes, edges=selected_edges, config=config)
 
-
-
-# # Define a list of available RDF predicates
-# predicates = [
-#     "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-#     "http://www.w3.org/2000/01/rdf-schema#label",
-#     "http://xmlns.com/foaf/0.1/name",
-#     "http://xmlns.com/foaf/0.1/homepage",
-#     "http://xmlns.com/foaf/0.1/mbox",
-# ]
-
-# # Define a default SPARQL query
-# default_query = """
-# SELECT ?subject ?predicate ?object
-# WHERE {
-#   ?subject ?predicate ?object .
-# }
-# """
-
-# # Define the Streamlit app
-# st.title("SPARQL Query Builder")
-
-# # Define the SPARQL query editor
-# query = streamlit_ace.st_ace(
-#     placeholder="Enter SPARQL query...",
-#     language="sparql",
-#     value=default_query,
-#     theme="github",
-#     font_size=14,
-#     height=400,
-#     key="query-editor",
-# )
-
-# # Define the predicate selection dropdown
-# predicate = st.selectbox("Predicate", predicates)
-
-# # Define the object input field
-# object_input = st.text_input("Object")
-
-# # Define the submit button
-# if st.button("Run Query"):
-#     # Build the SPARQL query string
-#     query_string = f"""
-#     SELECT ?subject
-#     WHERE {{
-#         ?subject <{predicate}> "{object_input}" .
-#     }}
-#     """
-#     # Execute the SPARQL query
-#     #results = sparql(query_string)
-#     # Display the query results
-#     st.write(query_string)
+# agraph(nodes=nodes, edges=edges, config=config)
 
 st.subheader('Accessible')
 
