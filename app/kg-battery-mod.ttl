@@ -1,0 +1,85 @@
+@prefix ns1: <http://emmo.info/emmo#> .
+@prefix ns2: <http://emmo.info/electrochemistry#> .
+@prefix ns3: <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns4: <http://data.europa.eu/s66#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://emmo.info/battery_knowledge_base#autobass_cell_10> a <http://emmo.info/battery#battery_96addc62_ea04_449a_8237_4cd541dd8e5f>,
+        <http://emmo.info/battery#battery_b7fdab58_6e91_4c84_b097_b06eff86a124> ;
+    ns2:electrochemistry_5d299271_3f68_494f_ab96_3db9acdd3138 <http://emmo.info/battery_knowledge_base#cell_10_negative_electrode> ;
+    ns2:electrochemistry_8e9cf965_9f92_46e8_b678_b50410ce3616 <http://emmo.info/battery_knowledge_base#cell_10_positive_electrode> ;
+    ns1:EMMO_60577dea_9019_4537_ac41_80b0fb563d41 <http://emmo.info/battery_knowledge_base#cell_10_cycling_result> ;
+    ns3:prefLabel "AutoBass Coin Cell 10" .
+
+<https://purl.org/BatteryKnowledgeGraph> a owl:Ontology ;
+    owl:imports <https://purl.org/BatteryDataKnowledgeGraph/0.1.0/kg-battery-data.ttl> ;
+    owl:versionIRI <https://purl.org/BatteryKnowledgeGraph/0.1.0/kg-battery.ttl> .
+
+<https://zenodo.org/record/7299473> a ns1:EMMO_0b25693d_c8e1_48c7_8330_18a45e4877ec ;
+    ns4:isResultOf <https://purl.org/BatteryExpertKnowledgeGraph#5d186ae8-94e7-4eb8-941d-255b833724de> ;
+    ns1:EMMO_17e27c22_37e1_468c_9dd7_95e137f73e7f <https://zenodo.org/record/7299473/files/AutoBassPapercells.hdf5> ;
+    rdfs:comment "Cycling Data of 64 Cells manufactured by AutoBASS",
+        "This is the complete dataset for cells made for the publication of https://doi.org/10.1039/D2DD00046F" ;
+    ns3:prefLabel "7299473" .
+
+<http://emmo.info/battery_knowledge_base#cell_10_negative_active_material> a ns2:electrochemistry_17278fd7_7b1d_4acd_9dbb_aa72351cd165 .
+
+<http://emmo.info/battery_knowledge_base#cell_10_negative_electrode> a ns2:electrochemistry_c94c041b_8ea6_43e7_85cc_d2bce7785b4c ;
+    ns2:electrochemistry_860aa941_5ff9_4452_8a16_7856fad07bee <http://emmo.info/battery_knowledge_base#cell_10_negative_active_material> ;
+    ns1:EMMO_0aa934ee_1ad4_4345_8a7f_bc73ec67c7e5 <http://emmo.info/battery_knowledge_base#cell_10_negative_electrode_loading> ;
+    ns3:prefLabel "AutoBassCell10NegativeElectrode" .
+
+<http://emmo.info/battery_knowledge_base#cell_10_negative_electrode_loading> a ns2:electrochemistry_c955c089_6ee1_41a2_95fc_d534c5cfd3d5 ;
+    ns1:EMMO_67fc0a36_8dcb_4ffa_9a43_31074efa3296 ns1:EMMO_17f35fcd_3675_4f90_8742_4ce1e07ea7a3 ;
+    ns1:EMMO_8ef3cd6d_ae58_4a8d_9fc0_ad8f49015cd0 3.2e+00 .
+
+<http://emmo.info/battery_knowledge_base#cell_10_positive_active_material> a <http://emmo.info/battery#battery_e10d5fef_4a97_40ea_8f24_88f054856671> .
+
+<http://emmo.info/battery_knowledge_base#cell_10_positive_electrode> a ns2:electrochemistry_aff732a9_238a_4734_977c_b2ba202af126 ;
+    ns2:electrochemistry_860aa941_5ff9_4452_8a16_7856fad07bee <http://emmo.info/battery_knowledge_base#cell_10_positive_active_material> .
+
+<http://emmo.info/battery_knowledge_base#cell_10_raw_Step_index> a ns2:StepIndex ;
+    ns1:EMMO_67fc0a36_8dcb_4ffa_9a43_31074efa3296 ns1:EMMO_15d62b55_38ea_4aec_b7c4_25db1a2e5a01 ;
+    ns1:EMMO_f7bf2a25_c620_4b2e_9261_b76fb2f5820a "/cell_10/raw/Step_index" .
+
+<http://emmo.info/battery_knowledge_base#cell_10_raw_charge_energy> a <http://emmo.info/battery#battery_64838217_d1fc_4ad5_b913_8fec8c32fa58> ;
+    ns1:EMMO_67fc0a36_8dcb_4ffa_9a43_31074efa3296 ns1:EMMO_8fc3e20d_a315_4970_a074_ea2194eb462b ;
+    ns1:EMMO_f7bf2a25_c620_4b2e_9261_b76fb2f5820a "/cell_10/raw/charge_Energy(Wh)" .
+
+<http://emmo.info/battery_knowledge_base#cell_10_raw_current> a ns2:electrochemistry_637ee9c4_4b3f_4d3a_975b_c0572dfe53ce ;
+    ns1:EMMO_67fc0a36_8dcb_4ffa_9a43_31074efa3296 ns1:EMMO_db5dd38d_ac79_4af6_8782_fee7e7150ae8 ;
+    ns1:EMMO_f7bf2a25_c620_4b2e_9261_b76fb2f5820a "/cell_10/raw/Current(A)" .
+
+<http://emmo.info/battery_knowledge_base#cell_10_raw_cycle_index> a <http://emmo.info/battery#battery_0c31eae9_725c_4ff3_bfda_ce0124ec0f26> ;
+    ns1:EMMO_67fc0a36_8dcb_4ffa_9a43_31074efa3296 ns1:PureNumberUnit ;
+    ns1:EMMO_f7bf2a25_c620_4b2e_9261_b76fb2f5820a "/cell_10/raw/yCycle_index" .
+
+<http://emmo.info/battery_knowledge_base#cell_10_raw_discharge_energy> a <http://emmo.info/battery#battery_b2e050f6_ec61_442f_a607_ca24787cafe4> ;
+    ns1:EMMO_67fc0a36_8dcb_4ffa_9a43_31074efa3296 ns1:EMMO_8fc3e20d_a315_4970_a074_ea2194eb462b ;
+    ns1:EMMO_f7bf2a25_c620_4b2e_9261_b76fb2f5820a "/cell_10/raw/discharge_Energy(Wh)" .
+
+<http://emmo.info/battery_knowledge_base#cell_10_raw_test_time> a ns2:electrochemistry_27b3799c_250c_4332_8b71_7992c4a7bb05 ;
+    ns1:EMMO_67fc0a36_8dcb_4ffa_9a43_31074efa3296 ns1:EMMO_314ba716_2d3d_4462_9a4f_d3419ae1df43 ;
+    ns1:EMMO_f7bf2a25_c620_4b2e_9261_b76fb2f5820a "/cell_10/raw/Testtime(s)" .
+
+<http://emmo.info/battery_knowledge_base#cell_10_raw_voltage> a ns2:electrochemistry_4ebe2ef1_eea8_4b10_822d_7a68215bd24d ;
+    ns1:EMMO_67fc0a36_8dcb_4ffa_9a43_31074efa3296 ns1:EMMO_e2207e91_02b0_4a8a_b13e_61d2a2a839f1 ;
+    ns1:EMMO_f7bf2a25_c620_4b2e_9261_b76fb2f5820a "/cell_10/raw/Voltage(V)" .
+
+<https://purl.org/BatteryExpertKnowledgeGraph#5d186ae8-94e7-4eb8-941d-255b833724de> a <https://w3id.org/dingo#Project> .
+
+<https://zenodo.org/record/7299473/files/AutoBassPapercells.hdf5> a ns1:EMMO_96529769_0c49_402e_ac09_8bc2c5156f77 ;
+    ns1:EMMO_17e27c22_37e1_468c_9dd7_95e137f73e7f <http://emmo.info/battery_knowledge_base#cell_10_cycling_result> ;
+    ns3:prefLabel "AutoBassPapercells.hdf5" .
+
+<http://emmo.info/battery_knowledge_base#cell_10_cycling_result> a <http://emmo.info/battery#battery_2198cf67_b5d2_4325_9b6a_dde0a26fd065> ;
+    ns1:EMMO_0aa934ee_1ad4_4345_8a7f_bc73ec67c7e5 <http://emmo.info/battery_knowledge_base#cell_10_raw_Step_index>,
+        <http://emmo.info/battery_knowledge_base#cell_10_raw_charge_energy>,
+        <http://emmo.info/battery_knowledge_base#cell_10_raw_current>,
+        <http://emmo.info/battery_knowledge_base#cell_10_raw_cycle_index>,
+        <http://emmo.info/battery_knowledge_base#cell_10_raw_discharge_energy>,
+        <http://emmo.info/battery_knowledge_base#cell_10_raw_test_time>,
+        <http://emmo.info/battery_knowledge_base#cell_10_raw_voltage> .
+
