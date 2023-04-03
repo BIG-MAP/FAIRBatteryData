@@ -7,6 +7,10 @@
     "battery": "http://emmo.info/battery#",
     "bkb": "http://emmo.info/battery_knowledge_base#",
     "value": "@value",
+    "creator": {
+      "@id": "http://purl.org/dc/terms/creator",
+      "@type": "@id"
+    },
     "hasPart": {
       "@id": "emmo:hasPart",
       "@type": "@id"
@@ -26,13 +30,10 @@
       "@id":"emmo:hasFileIndex"
     }
   },
-  "@id": "https://zenodo.org/record/7299473",
+  "@id": "https://raw.githubusercontent.com/BIG-MAP/FAIRBatteryData/json-ld/app/example_data/synthetic_csv_data_from_BattMo_DE.csv",
   "@type": "emmo:CSV",
   "skos:prefLabel": "synthetic_csv_data_from_BattMo_de",
-    "hasPart": {
-      "@id": "bkb:syntheic_data_result_example_2",
-      "@type": "battery:BatteryCyclingMeasurementResult"
-      },
+  "creator": "https://github.com/BIG-MAP/BatteryExpertKnowledgeGraph/ontology/BatteryExperts#1e7a3e32-475f-43ed-a85f-9aacb8c9296d",
     "hasQuantitativeProperty": [ {
         "@id": "bkb:example_2_current",
         "@type": "echem:CellCurrent",

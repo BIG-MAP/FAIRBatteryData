@@ -77,10 +77,13 @@ thisdir = Path(__file__).resolve().parent
 knowledgedir = thisdir
 
 kg_path_mod = f"{knowledgedir}/kg-battery-mod.ttl"
+csv_path = f"{knowledgedir}/example_data/synthetic_csv_data_from_BattMo_EN.json"
 
 # Load RDF graph from a file
 graph = rdflib.Graph()
-graph.parse(kg_path_mod, format="ttl")
+#graph.parse(kg_path_mod, format="ttl")
+
+graph.parse(csv_path, format="json-ld")
 
 def extract_pref_labels(g):
     pref_labels = {}
@@ -100,6 +103,8 @@ nodes = []
 edges = []
 seen_nodes = set()
 
+st.write(label_uri_dict['SimonClark'])
+
 for s, p, o in graph:
     source = str(s)
     target = str(o)
@@ -107,10 +112,15 @@ for s, p, o in graph:
     if isinstance(o, URIRef) and target not in seen_nodes:
         if target in uri_label_dict.keys():
             node_label = uri_label_dict[target]
-        else:
-            node_label = ""
+        elif re.search(r'#(\w+)', target):
+            node_label = re.search(r'#(\w+)', target).group(1)
         
-        nodes.append(Node(id = target, label = node_label))
+        if node_label == 'SimonClark':
+            st.write("top entry")
+            image_url = 'https://raw.githubusercontent.com/BIG-MAP/FAIRBatteryData/json-ld/app/images/simon.clark-sintef.no.jpg'
+            nodes.append(Node(id = target, label = node_label, shape="circularImage", image=image_url))
+        else:
+            nodes.append(Node(id = target, label = node_label))
         seen_nodes.add(target)
     if source not in seen_nodes:
         if source in uri_label_dict:
@@ -118,12 +128,16 @@ for s, p, o in graph:
         else:
             node_label = ""
         
-        nodes.append(Node(id = source, label = node_label))
+        if node_label == 'SimonClark':
+            image_url = 'https://github.com/BIG-MAP/FAIRBatteryData/blob/json-ld/app/images/battery_icon.png'
+            nodes.append(Node(id = source, label = node_label, shape="circularImage", image = image_url))
+        else:
+            nodes.append(Node(id = source, label = node_label))
         seen_nodes.add(source)
     
     if predicate in uri_label_dict:
         edge_label = uri_label_dict[predicate]
-    else:
+    elif re.search(r'#(\w+)', predicate):
         edge_label = re.search(r'#(\w+)', predicate).group(1)
     edges.append( Edge( source=source, target = target, label = edge_label))
 

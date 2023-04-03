@@ -30,14 +30,10 @@
       "@id":"emmo:hasFileIndex"
     }
   },
-  "@id": "https://zenodo.org/record/7299473",
+  "@id": "https://raw.githubusercontent.com/BIG-MAP/FAIRBatteryData/json-ld/app/example_data/synthetic_csv_data_from_BattMo_EN.csv",
   "@type": "emmo:CSV",
   "skos:prefLabel": "synthetic_csv_data_from_BattMo_en",
   "creator": "https://github.com/BIG-MAP/BatteryExpertKnowledgeGraph/ontology/BatteryExperts#1e7a3e32-475f-43ed-a85f-9aacb8c9296d",
-    "hasPart": {
-      "@id": "bkb:syntheic_data_result_example_1",
-      "@type": "battery:BatteryCyclingMeasurementResult"
-      },
     "hasQuantitativeProperty": [ {
         "@id": "bkb:example_1_current",
         "@type": "echem:CellCurrent",
