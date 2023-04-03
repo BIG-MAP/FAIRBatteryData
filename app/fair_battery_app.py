@@ -29,6 +29,7 @@ from rdflib.plugins.sparql import prepareQuery
 import pandas as pd
 import requests
 
+@st.cache_data
 def load_ontology():
     emmo = 'https://emmo-repo.github.io/versions/1.0.0-beta3/emmo-inferred.ttl'
     quantities = 'https://raw.githubusercontent.com/emmo-repo/domain-electrochemistry/master/isq_bigmap_temp.ttl'
@@ -71,8 +72,6 @@ st.title('FAIR Battery Data Demo')
 
 g, label_uri_dict, uri_label_dict = load_ontology()
 
-st.write(label_uri_dict['SimonClark'])
-
 thisdir = Path(__file__).resolve().parent 
 knowledgedir = thisdir
 
@@ -102,8 +101,6 @@ prefLabels = extract_pref_labels(graph)
 nodes = []
 edges = []
 seen_nodes = set()
-
-st.write(label_uri_dict['SimonClark'])
 
 for s, p, o in graph:
     source = str(s)
@@ -138,6 +135,8 @@ for s, p, o in graph:
         edge_label = uri_label_dict[predicate]
     elif re.search(r'#(\w+)', predicate):
         edge_label = re.search(r'#(\w+)', predicate).group(1)
+    elif predicate == 'http://purl.org/dc/terms/creator':
+        edge_label = 'creator'
     edges.append( Edge( source=source, target = target, label = edge_label))
 
 
@@ -215,17 +214,89 @@ ag = agraph(nodes=nodes, edges=edges, config=config)
 
 st.subheader('Accessible')
 
-# Set the URL for the CSV file
-url = "https://raw.githubusercontent.com/BIG-MAP/OntologyExercises/main/data/TeamB.csv"
+uris = {'none'}
+
+
+
+# query_str = """
+#     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+#     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    
+#     SELECT ?o
+#     WHERE {{
+#         <http://emmo.info/battery_knowledge_base#example_1_current> rdf:type ?o .
+#     }}
+# """
+# #st.write(query_str)
+# results = graph.query(query_str)
+
+# for triple in results:
+#     st.write(triple)
+# # uris = [str(uri[0]) for uri in results]
+# # st.write(dir(results))
+
+@st.cache_data
+def check_for_data():
+    CSVFile = str(label_uri_dict['CSV'])
+    query_str = f"""
+        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        
+        SELECT ?s
+        WHERE {{
+            ?s rdf:type <{CSVFile}> .
+        }}
+    """
+    results = graph.query(query_str)
+    uris = [str(uri[0]) for uri in results]
+    return uris
+
+@st.cache_data
+def get_quantity_URIs(quantity_label):
+    hasFileIndex = 'http://emmo.info/emmo#hasFileIndex'
+    query_str = f"""
+        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        
+        SELECT ?o
+        WHERE {{
+            ?s <{hasFileIndex}> ?label ;
+                rdf:type ?o.
+            FILTER(STR(?label) = "{quantity_label}")
+        }}
+    """
+    #st.write(query_str)
+    results = graph.query(query_str)
+    uris = [str(uri[0]) for uri in results]
+    return uris
+
+data = pd.DataFrame()
+    
+uris = check_for_data()
+
+csv_url = st.selectbox('Select an option:', uris)
 
 # Use Pandas to read the CSV data
-data = pd.read_csv(url)
+data = pd.read_csv(csv_url)
 
 # Display the data in Streamlit
 st.write(data)
+disp_labels_dict = {}
+
+st.subheader('Interoperable & Reusable')
+
+for quantity_label in data.columns:
+    quantity_uris = get_quantity_URIs(quantity_label)
+    disp = re.search(r'#(\w+)', str(quantity_uris[0])).group(1)
+    disp_labels_dict[quantity_label] = disp
+    
+st.write(disp_labels_dict)
+
+selected_columns = st.multiselect('Select options:', options=disp_labels_dict, format_func=lambda x: disp_labels_dict[x])
+
 
 # Select the columns you want to plot
-selected_columns = st.multiselect('Select columns to plot', data.columns)
+#selected_columns = st.multiselect('Select columns to plot', options = disp_labels_dict)
 
 # Filter the data to only include the selected columns
 data = data[selected_columns]
@@ -236,176 +307,175 @@ fig = px.line(data, x=data.index, y=data.columns, title='Line Chart')
 # Display the chart in Streamlit
 st.plotly_chart(fig)
 
-st.subheader('Interoperable')
-
-st.subheader('Reusable')
-
-DATE_COLUMN = 'date/time'
-DATA_URL = ('https://s3-us-west-2.amazonaws.com/'
-            'streamlit-demo-data/uber-raw-data-sep14.csv.gz')
 
 
 
-# g = Network(height=800, width = 800, notebook=True)
-# g.toggle_hide_edges_on_drag(True)
-# g.barnes_hut()
-# g.from_nx(nx.davis_southern_women_graph())
-# g.show("ex.html")
-
-@st.cache_data
-def load_data(nrows):
-    data = pd.read_csv(DATA_URL, nrows=nrows)
-    lowercase = lambda x: str(x).lower()
-    data.rename(lowercase, axis='columns', inplace=True)
-    data[DATE_COLUMN] = pd.to_datetime(data[DATE_COLUMN])
-    return data
-
-data_load_state = st.text('Loading data...')
-data = load_data(10000)
-data_load_state.text("Done! (using st.cache_data)")
-
-if st.checkbox('Show raw data'):
-    st.subheader('Raw data')
-    st.write(data)
-
-st.subheader('Number of pickups by hour')
-hist_values = np.histogram(data[DATE_COLUMN].dt.hour, bins=24, range=(0,24))[0]
-st.bar_chart(hist_values)
-
-# Some number in the range 0-23
-hour_to_filter = st.slider('hour', 0, 23, 17)
-filtered_data = data[data[DATE_COLUMN].dt.hour == hour_to_filter]
-
-st.subheader('Map of all pickups at %s:00' % hour_to_filter)
-st.map(filtered_data)
-
-st.subheader('Graph Section')
+# DATE_COLUMN = 'date/time'
+# DATA_URL = ('https://s3-us-west-2.amazonaws.com/'
+#             'streamlit-demo-data/uber-raw-data-sep14.csv.gz')
 
 
 
+# # g = Network(height=800, width = 800, notebook=True)
+# # g.toggle_hide_edges_on_drag(True)
+# # g.barnes_hut()
+# # g.from_nx(nx.davis_southern_women_graph())
+# # g.show("ex.html")
 
-G = nx.karate_club_graph()
+# @st.cache_data
+# def load_data(nrows):
+#     data = pd.read_csv(DATA_URL, nrows=nrows)
+#     lowercase = lambda x: str(x).lower()
+#     data.rename(lowercase, axis='columns', inplace=True)
+#     data[DATE_COLUMN] = pd.to_datetime(data[DATE_COLUMN])
+#     return data
 
-SAME_CLUB_COLOR, DIFFERENT_CLUB_COLOR = "darkgrey", "red"
+# data_load_state = st.text('Loading data...')
+# data = load_data(10000)
+# data_load_state.text("Done! (using st.cache_data)")
 
-edge_attrs = {}
-for start_node, end_node, _ in G.edges(data=True):
-    edge_color = SAME_CLUB_COLOR if G.nodes[start_node]["club"] == G.nodes[end_node]["club"] else DIFFERENT_CLUB_COLOR
-    edge_attrs[(start_node, end_node)] = edge_color
+# if st.checkbox('Show raw data'):
+#     st.subheader('Raw data')
+#     st.write(data)
 
-nx.set_edge_attributes(G, edge_attrs, "edge_color")
+# st.subheader('Number of pickups by hour')
+# hist_values = np.histogram(data[DATE_COLUMN].dt.hour, bins=24, range=(0,24))[0]
+# st.bar_chart(hist_values)
 
-plot = figure(width=400, height=400, x_range=(-1.2, 1.2), y_range=(-1.2, 1.2),
-              x_axis_location=None, y_axis_location=None, toolbar_location=None,
-              title="Graph Interaction Demo", background_fill_color="#efefef",
-              tooltips="index: @index, club: @club")
-plot.grid.grid_line_color = None
+# # Some number in the range 0-23
+# hour_to_filter = st.slider('hour', 0, 23, 17)
+# filtered_data = data[data[DATE_COLUMN].dt.hour == hour_to_filter]
 
-graph_renderer = from_networkx(G, nx.spring_layout, scale=1, center=(0, 0))
-graph_renderer.node_renderer.glyph = Circle(size=15, fill_color="lightblue")
-graph_renderer.edge_renderer.glyph = MultiLine(line_color="edge_color",
-                                               line_alpha=0.8, line_width=1.5)
-plot.renderers.append(graph_renderer)
-plot.background_fill_color = 'black'
+# st.subheader('Map of all pickups at %s:00' % hour_to_filter)
+# st.map(filtered_data)
 
-st.bokeh_chart(plot)
-
-st.subheader('Another Network Graph Chart')
-
-
-thisdir = Path(__file__).resolve().parent
-knowledgedir = thisdir
-
-kg_path_mod = f"{knowledgedir}/kg-battery-mod.ttl"
-
-# Load RDF graph from a file
-graph = rdflib.Graph()
-graph.parse(kg_path_mod, format="ttl")
-
-# Create a networkx graph from the RDF graph
-nx_graph = nx.Graph()
-
-for subject, predicate, object in graph:
-    nx_graph.add_edge(subject, object)
-
-# Generate the node labels using the skos:prefLabel property
-node_labels = defaultdict(str)
-for subject, predicate, object in graph.triples((None, rdflib.term.URIRef('http://www.w3.org/2004/02/skos/core#prefLabel'), None)):
-    node_labels[subject] = str(object)
+# st.subheader('Graph Section')
 
 
-pos = nx.spring_layout(nx_graph)
-nx.draw_networkx_nodes(nx_graph, pos, node_size=100, node_color='lightblue')
-nx.draw_networkx_edges(nx_graph, pos)
-nx.draw_networkx_labels(nx_graph, pos, labels=node_labels, font_size=10, font_family="Arial")
-
-st.pyplot()
 
 
-st.subheader('A plotly example')
-pos = nx.spring_layout(nx_graph, seed=42)
+# G = nx.karate_club_graph()
 
-# Create edges trace
-edge_x = []
-edge_y = []
-for edge in nx_graph.edges():
-    x0, y0 = pos[edge[0]]
-    x1, y1 = pos[edge[1]]
-    edge_x.append(x0)
-    edge_x.append(x1)
-    edge_x.append(None)
-    edge_y.append(y0)
-    edge_y.append(y1)
-    edge_y.append(None)
+# SAME_CLUB_COLOR, DIFFERENT_CLUB_COLOR = "darkgrey", "red"
 
-edge_trace = go.Scatter(x=edge_x, y=edge_y, line=dict(width=1, color='gray'), mode='lines')
+# edge_attrs = {}
+# for start_node, end_node, _ in G.edges(data=True):
+#     edge_color = SAME_CLUB_COLOR if G.nodes[start_node]["club"] == G.nodes[end_node]["club"] else DIFFERENT_CLUB_COLOR
+#     edge_attrs[(start_node, end_node)] = edge_color
 
-# Create nodes trace
-node_x = []
-node_y = []
-node_text = []
-for node in pos:
-    x, y = pos[node]
-    node_x.append(x)
-    node_y.append(y)
-    node_text.append(node_labels[node])
+# nx.set_edge_attributes(G, edge_attrs, "edge_color")
 
-node_trace = go.Scatter(
-    x=node_x, y=node_y,
-    text=node_text, 
-    mode='markers+text', 
-    marker=dict(
-        showscale=True,
-        # colorscale options
-        #'Greys' | 'YlGnBu' | 'Greens' | 'YlOrRd' | 'Bluered' | 'RdBu' |
-        #'Reds' | 'Blues' | 'Picnic' | 'Rainbow' | 'Portland' | 'Jet' |
-        #'Hot' | 'Blackbody' | 'Earth' | 'Electric' | 'Viridis' |
-        colorscale='YlGnBu',
-        reversescale=True,
-        color=[],
-        size=10,
-        colorbar=dict(
-            thickness=15,
-            title='Node Connections',
-            xanchor='left',
-            titleside='right'
-        ),
-        line_width=2))
+# plot = figure(width=400, height=400, x_range=(-1.2, 1.2), y_range=(-1.2, 1.2),
+#               x_axis_location=None, y_axis_location=None, toolbar_location=None,
+#               title="Graph Interaction Demo", background_fill_color="#efefef",
+#               tooltips="index: @index, club: @club")
+# plot.grid.grid_line_color = None
 
-fig = go.Figure(data=[edge_trace, node_trace],
-              layout=go.Layout(
-                title='<br>Network graph made with Python',
-                titlefont_size=16,
-                showlegend=False,
-                hovermode='closest',
-                margin=dict(b=20,l=5,r=5,t=40),
-                annotations=[ dict(
-                    text="Python code: <a href='https://plotly.com/ipython-notebooks/network-graphs/'> https://plotly.com/ipython-notebooks/network-graphs/</a>",
-                    showarrow=False,
-                    xref="paper", yref="paper",
-                    x=0.005, y=-0.002 ) ],
-                xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-                yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
-                )
+# graph_renderer = from_networkx(G, nx.spring_layout, scale=1, center=(0, 0))
+# graph_renderer.node_renderer.glyph = Circle(size=15, fill_color="lightblue")
+# graph_renderer.edge_renderer.glyph = MultiLine(line_color="edge_color",
+#                                                line_alpha=0.8, line_width=1.5)
+# plot.renderers.append(graph_renderer)
+# plot.background_fill_color = 'black'
 
-st.plotly_chart(fig)
+# st.bokeh_chart(plot)
+
+# st.subheader('Another Network Graph Chart')
+
+
+# thisdir = Path(__file__).resolve().parent
+# knowledgedir = thisdir
+
+# kg_path_mod = f"{knowledgedir}/kg-battery-mod.ttl"
+
+# # Load RDF graph from a file
+# graph = rdflib.Graph()
+# graph.parse(kg_path_mod, format="ttl")
+
+# # Create a networkx graph from the RDF graph
+# nx_graph = nx.Graph()
+
+# for subject, predicate, object in graph:
+#     nx_graph.add_edge(subject, object)
+
+# # Generate the node labels using the skos:prefLabel property
+# node_labels = defaultdict(str)
+# for subject, predicate, object in graph.triples((None, rdflib.term.URIRef('http://www.w3.org/2004/02/skos/core#prefLabel'), None)):
+#     node_labels[subject] = str(object)
+
+
+# pos = nx.spring_layout(nx_graph)
+# nx.draw_networkx_nodes(nx_graph, pos, node_size=100, node_color='lightblue')
+# nx.draw_networkx_edges(nx_graph, pos)
+# nx.draw_networkx_labels(nx_graph, pos, labels=node_labels, font_size=10, font_family="Arial")
+
+# st.pyplot()
+
+
+# st.subheader('A plotly example')
+# pos = nx.spring_layout(nx_graph, seed=42)
+
+# # Create edges trace
+# edge_x = []
+# edge_y = []
+# for edge in nx_graph.edges():
+#     x0, y0 = pos[edge[0]]
+#     x1, y1 = pos[edge[1]]
+#     edge_x.append(x0)
+#     edge_x.append(x1)
+#     edge_x.append(None)
+#     edge_y.append(y0)
+#     edge_y.append(y1)
+#     edge_y.append(None)
+
+# edge_trace = go.Scatter(x=edge_x, y=edge_y, line=dict(width=1, color='gray'), mode='lines')
+
+# # Create nodes trace
+# node_x = []
+# node_y = []
+# node_text = []
+# for node in pos:
+#     x, y = pos[node]
+#     node_x.append(x)
+#     node_y.append(y)
+#     node_text.append(node_labels[node])
+
+# node_trace = go.Scatter(
+#     x=node_x, y=node_y,
+#     text=node_text, 
+#     mode='markers+text', 
+#     marker=dict(
+#         showscale=True,
+#         # colorscale options
+#         #'Greys' | 'YlGnBu' | 'Greens' | 'YlOrRd' | 'Bluered' | 'RdBu' |
+#         #'Reds' | 'Blues' | 'Picnic' | 'Rainbow' | 'Portland' | 'Jet' |
+#         #'Hot' | 'Blackbody' | 'Earth' | 'Electric' | 'Viridis' |
+#         colorscale='YlGnBu',
+#         reversescale=True,
+#         color=[],
+#         size=10,
+#         colorbar=dict(
+#             thickness=15,
+#             title='Node Connections',
+#             xanchor='left',
+#             titleside='right'
+#         ),
+#         line_width=2))
+
+# fig = go.Figure(data=[edge_trace, node_trace],
+#               layout=go.Layout(
+#                 title='<br>Network graph made with Python',
+#                 titlefont_size=16,
+#                 showlegend=False,
+#                 hovermode='closest',
+#                 margin=dict(b=20,l=5,r=5,t=40),
+#                 annotations=[ dict(
+#                     text="Python code: <a href='https://plotly.com/ipython-notebooks/network-graphs/'> https://plotly.com/ipython-notebooks/network-graphs/</a>",
+#                     showarrow=False,
+#                     xref="paper", yref="paper",
+#                     x=0.005, y=-0.002 ) ],
+#                 xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+#                 yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
+#                 )
+
+# st.plotly_chart(fig)

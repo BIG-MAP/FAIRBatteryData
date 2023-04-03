@@ -31,7 +31,7 @@
     }
   },
   "@id": "https://raw.githubusercontent.com/BIG-MAP/FAIRBatteryData/json-ld/app/example_data/synthetic_csv_data_from_BattMo_DE.csv",
-  "@type": "emmo:CSV",
+  "@type": "emmo:EMMO_69d3a7c6_fb3e_4aa8_aec9_f4c1508ca4dd",
   "skos:prefLabel": "synthetic_csv_data_from_BattMo_de",
   "creator": "https://github.com/BIG-MAP/BatteryExpertKnowledgeGraph/ontology/BatteryExperts#1e7a3e32-475f-43ed-a85f-9aacb8c9296d",
     "hasQuantitativeProperty": [ {
