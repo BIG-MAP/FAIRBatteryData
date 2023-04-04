@@ -10,6 +10,7 @@ from pathlib import Path
 import os
 import streamlit_ace
 import re
+import inspect
 
 import plotly.express as px
 
@@ -122,6 +123,11 @@ prefLabels = extract_pref_labels(graph)
 nodes = []
 edges = []
 seen_nodes = set()
+
+# argspec = inspect.getfullargspec(agraph.__init__)
+# kwargs = argspec.kwonlyargs
+
+# st.write(dir(agraph))
 
 for s, p, o in graph:
     source = str(s)
@@ -268,6 +274,21 @@ uris = []
 #     st.write(triple)
 # # uris = [str(uri[0]) for uri in results]
 # # st.write(dir(results))
+CSVFile = str(label_uri_dict['CSV'])
+query_ex = f"""
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    
+    SELECT ?s
+    WHERE {{
+        ?s rdf:type <{CSVFile}> .
+    }}
+"""
+
+show_code = st.checkbox('Show SPARQL query')
+
+if show_code:
+    st.code(query_ex, language='sparql')
+
 
 @st.cache_data
 def check_for_data():
@@ -325,22 +346,19 @@ for quantity_label in data.columns:
     disp = re.search(r'#(\w+)', str(quantity_uris[0])).group(1)
     disp_labels_dict[quantity_label] = disp
     
-st.write(disp_labels_dict)
+#st.write(disp_labels_dict)
+selected_columns_x = st.multiselect('Select X-Axis Quantity:', options=disp_labels_dict, format_func=lambda x: disp_labels_dict[x])
+selected_columns_y = st.multiselect('Select Y-Axis Quantity:', options=disp_labels_dict, format_func=lambda x: disp_labels_dict[x])
 
-selected_columns = st.multiselect('Select options:', options=disp_labels_dict, format_func=lambda x: disp_labels_dict[x])
+if len(selected_columns_y) > 0 and len(selected_columns_x) > 0:
+    y_name = selected_columns_y[0]
+    x_name = selected_columns_x[0]
 
-
-# Select the columns you want to plot
-#selected_columns = st.multiselect('Select columns to plot', options = disp_labels_dict)
-
-# Filter the data to only include the selected columns
-data = data[selected_columns]
-
-# Create a line chart using Plotly
-fig = px.line(data, x=data.index, y=data.columns, title='Line Chart')
-
-# Display the chart in Streamlit
-st.plotly_chart(fig)
+    # Create a line chart using Plotly
+    fig = px.line(data, x=x_name, y=y_name, title='Line Chart', labels = disp_labels_dict)
+    
+    # Display the chart in Streamlit
+    st.plotly_chart(fig)
 
 
 
