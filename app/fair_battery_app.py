@@ -29,6 +29,8 @@ from rdflib.plugins.sparql import prepareQuery
 import pandas as pd
 import requests
 
+st.set_page_config(layout="wide")
+
 @st.cache_data
 def load_ontology():
     emmo = 'https://emmo-repo.github.io/versions/1.0.0-beta3/emmo-inferred.ttl'
@@ -71,6 +73,15 @@ def load_ontology():
 st.title('FAIR Battery Data Demo')
 
 g, label_uri_dict, uri_label_dict = load_ontology()
+
+people_dict = {label_uri_dict['SimonClark']: 'Simon Clark',
+               label_uri_dict['JesperFriis']: 'Jesper Friis',
+               label_uri_dict['EibarFlores']: 'Eibar Flores',
+               label_uri_dict['TejsVegge']: 'Tejs Vegge'}
+
+
+# selected_people = st.multiselect('Select options:', options=people_dict, format_func=lambda x: people_dict[x])
+#st.write(selected_people)
 
 thisdir = Path(__file__).resolve().parent 
 knowledgedir = thisdir
@@ -142,7 +153,7 @@ for s, p, o in graph:
     edges.append( Edge( source=source, target = target, label = edge_label))
 
 
-config = Config(width=950,
+config = Config(width=1500,
                 height=950,
                 directed=True, 
                 physics=False, 
@@ -276,7 +287,7 @@ def get_quantity_URIs(quantity_label):
         SELECT ?o
         WHERE {{
             ?s <{hasFileIndex}> ?label ;
-                rdf:type ?o.
+                rdf:type ?o .
             FILTER(STR(?label) = "{quantity_label}")
         }}
     """
@@ -302,8 +313,6 @@ st.subheader('Interoperable & Reusable')
 
 for quantity_label in data.columns:
     quantity_uris = get_quantity_URIs(quantity_label)
-    st.write(quantity_label)
-    st.write(quantity_uris)
     disp = re.search(r'#(\w+)', str(quantity_uris[0])).group(1)
     disp_labels_dict[quantity_label] = disp
     
