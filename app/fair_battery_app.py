@@ -74,15 +74,6 @@ st.title('FAIR Battery Data Demo')
 
 g, label_uri_dict, uri_label_dict = load_ontology()
 
-people_dict = {label_uri_dict['SimonClark']: 'Simon Clark',
-               label_uri_dict['JesperFriis']: 'Jesper Friis',
-               label_uri_dict['EibarFlores']: 'Eibar Flores',
-               label_uri_dict['TejsVegge']: 'Tejs Vegge'}
-
-
-# selected_people = st.multiselect('Select options:', options=people_dict, format_func=lambda x: people_dict[x])
-#st.write(selected_people)
-
 thisdir = Path(__file__).resolve().parent 
 knowledgedir = thisdir
 
@@ -90,12 +81,27 @@ kg_path_mod = f"{knowledgedir}/kg-battery-mod.ttl"
 csv_path_EN = f"{knowledgedir}/example_data/synthetic_csv_data_from_BattMo_EN.json"
 csv_path_DE = f"{knowledgedir}/example_data/synthetic_csv_data_from_BattMo_DE.json"
 
+
+people_dict = {label_uri_dict['SimonClark']: 'Simon Clark',
+               label_uri_dict['JesperFriis']: 'Jesper Friis',
+               label_uri_dict['EibarFlores']: 'Eibar Flores',
+               label_uri_dict['TejsVegge']: 'Tejs Vegge'}
+
+file_dict = {csv_path_EN: "Data Set 1",
+             csv_path_DE: "Data Set 2"}
+
+
+selected_files = st.multiselect('Select options:', options=file_dict, format_func=lambda x: file_dict[x])
+#st.write(selected_people)
+
+
 # Load RDF graph from a file
 graph = rdflib.Graph()
 #graph.parse(kg_path_mod, format="ttl")
 
-graph.parse(csv_path_EN, format="json-ld")
-graph.parse(csv_path_DE, format="json-ld")
+for path in selected_files:
+    graph.parse(path, format="json-ld")
+
 
 def extract_pref_labels(g):
     pref_labels = {}
@@ -152,6 +158,7 @@ for s, p, o in graph:
         edge_label = 'creator'
     edges.append( Edge( source=source, target = target, label = edge_label))
 
+node_style = {"label": {"color": "red"}}
 
 config = Config(width=1500,
                 height=950,
