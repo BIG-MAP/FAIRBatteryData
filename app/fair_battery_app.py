@@ -72,6 +72,8 @@ def load_ontology():
 
 st.title('FAIR Battery Data Demo')
 
+st.subheader('Findable')
+
 g, label_uri_dict, uri_label_dict = load_ontology()
 
 thisdir = Path(__file__).resolve().parent 
