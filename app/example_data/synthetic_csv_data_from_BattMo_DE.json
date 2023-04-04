@@ -48,7 +48,7 @@
         "hasReferenceUnit": {
             "@id": "emmo:Second"
         },
-        "hasFileIndex": "Zeit, s"
+        "hasFileIndex": "Zeit / s"
     },
     {
         "@id": "bkb:example_2_voltage",

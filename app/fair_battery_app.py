@@ -76,13 +76,15 @@ thisdir = Path(__file__).resolve().parent
 knowledgedir = thisdir
 
 kg_path_mod = f"{knowledgedir}/kg-battery-mod.ttl"
-csv_path = f"{knowledgedir}/example_data/synthetic_csv_data_from_BattMo_EN.json"
+csv_path_EN = f"{knowledgedir}/example_data/synthetic_csv_data_from_BattMo_EN.json"
+csv_path_DE = f"{knowledgedir}/example_data/synthetic_csv_data_from_BattMo_DE.json"
 
 # Load RDF graph from a file
 graph = rdflib.Graph()
 #graph.parse(kg_path_mod, format="ttl")
 
-graph.parse(csv_path, format="json-ld")
+graph.parse(csv_path_EN, format="json-ld")
+graph.parse(csv_path_DE, format="json-ld")
 
 def extract_pref_labels(g):
     pref_labels = {}
@@ -140,11 +142,23 @@ for s, p, o in graph:
     edges.append( Edge( source=source, target = target, label = edge_label))
 
 
-config = Config(width=750,
+config = Config(width=950,
                 height=950,
                 directed=True, 
-                physics=True, 
+                physics=False, 
+                solver = 'barnesHut',
+                stabilize = True,
+                fit = True,
                 hierarchical=False,
+                levelSeparation = 150,
+                nodeSpacing = 100,
+                treeSpacing = 200,
+                blockShifting = True,
+                edgeMinimization = True,
+                parentCentralization = True,
+                direction = 'UD',
+                sortMethod = 'hubsize',
+                shakeTowards = 'roots',
                 # **kwargs
                 )
 
@@ -214,7 +228,7 @@ ag = agraph(nodes=nodes, edges=edges, config=config)
 
 st.subheader('Accessible')
 
-uris = {'none'}
+uris = []
 
 
 
@@ -248,7 +262,8 @@ def check_for_data():
         }}
     """
     results = graph.query(query_str)
-    uris = [str(uri[0]) for uri in results]
+    for uri in results:
+        uris.append(str(uri[0]))
     return uris
 
 @st.cache_data
@@ -287,6 +302,8 @@ st.subheader('Interoperable & Reusable')
 
 for quantity_label in data.columns:
     quantity_uris = get_quantity_URIs(quantity_label)
+    st.write(quantity_label)
+    st.write(quantity_uris)
     disp = re.search(r'#(\w+)', str(quantity_uris[0])).group(1)
     disp_labels_dict[quantity_label] = disp
     
