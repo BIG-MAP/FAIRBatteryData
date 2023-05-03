@@ -26,6 +26,8 @@ from rdflib import Graph, URIRef, Namespace, Literal
 from rdflib.namespace import RDF, RDFS, SKOS
 from streamlit_agraph import agraph, TripleStore, Node, Edge, Config
 from rdflib.plugins.sparql import prepareQuery
+from fuzzywuzzy import fuzz, process
+
 
 import pandas as pd
 import requests
@@ -35,8 +37,7 @@ st.set_page_config(layout="wide")
 @st.cache_data
 def load_ontology():
     emmo = 'https://emmo-repo.github.io/versions/1.0.0-beta3/emmo-inferred.ttl'
-    quantities = 'https://raw.githubusercontent.com/emmo-repo/domain-electrochemistry/master/isq_bigmap_temp.ttl'
-    cs = 'https://raw.githubusercontent.com/emmo-repo/domain-electrochemistry/master/computerscience_bigmap_temp.ttl'
+    quantities = 'https://raw.githubusercontent.com/emmo-repo/domain-electrochemistry/master/isq_bigmap.ttl'
     electrochemical_quantities = 'https://raw.githubusercontent.com/emmo-repo/domain-electrochemistry/master/electrochemicalquantities.ttl'
     electrochemistry = 'https://raw.githubusercontent.com/emmo-repo/domain-electrochemistry/master/electrochemistry.ttl'
     battery_quantities = 'https://raw.githubusercontent.com/emmo-repo/domain-battery/master/batteryquantities.ttl'
@@ -48,7 +49,7 @@ def load_ontology():
     g= Graph()
     g.parse(emmo, format='ttl')
     g.parse(quantities, format='ttl')
-    g.parse(cs, format='ttl')
+    #g.parse(cs, format='ttl')
     g.parse(electrochemical_quantities, format='ttl')
     g.parse(electrochemistry, format='ttl')
     g.parse(battery_quantities, format='ttl')
@@ -75,6 +76,8 @@ st.title('FAIR Battery Data Demo')
 
 st.subheader('Findable')
 
+
+
 g, label_uri_dict, uri_label_dict = load_ontology()
 
 thisdir = Path(__file__).resolve().parent 
@@ -92,6 +95,115 @@ people_dict = {label_uri_dict['SimonClark']: 'Simon Clark',
 
 file_dict = {csv_path_EN: "Data Set 1",
              csv_path_DE: "Data Set 2"}
+
+#st.write(label_uri_dict.keys())
+
+
+file = st.file_uploader("Upload CSV", type=["csv"])
+
+if file is not None:
+    # Use pandas to read the CSV data into a DataFrame
+    df = pd.read_csv(file)
+
+    # Display the DataFrame in the Streamlit app
+    st.write(df)
+    
+    # Get the list of column names
+    column_names = df.columns.tolist()
+
+    # # Prompt the user to select the label column
+    # label_column = st.selectbox("Select label column", column_names)
+    # components = label_column.split("/")
+    # component1 = components[0].strip()
+    # component2 = components[1].strip()
+    # label_column = component1
+
+    # # Extract the labels from the selected column in the DataFrame
+    # #labels = df[label_column].iloc[1:].tolist()
+
+    # # Find the closest match in the dictionary for each label
+    # results = {}
+    # closest_matches = {match[0]: label_uri_dict[match[0]] for match in process.extract(label_column, label_uri_dict.keys(), limit=10)}
+    # closest_matches_sorted = dict(sorted(closest_matches.items(), key=lambda item: len(item[0])))
+    
+
+
+with st.container():
+    for name in column_names:
+        col1, col2, col3 = st.columns([1, 2, 2])
+        read_label = col1.text_input("Data label", value=name, disabled=True)
+        closest_matches = {match[0]: label_uri_dict[match[0]] for match in process.extract(name, label_uri_dict.keys(), limit=50)}
+        closest_matches_sorted = dict(sorted(closest_matches.items(), key=lambda item: len(item[0])))
+        quantity = col2.selectbox(
+            "Quantity",
+            options=list(closest_matches_sorted),
+            key="quantity"+name,
+        )
+        Term = str(label_uri_dict[quantity])
+        query_str = """
+            PREFIX owl: <http://www.w3.org/2002/07/owl#>
+            PREFIX emmo: <http://emmo.info/emmo#>
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            
+            SELECT ?class
+            WHERE {{
+              ?class rdfs:subClassOf* [
+                a owl:Restriction ;
+                owl:hasValue <http://emmo.info/emmo#EMMO_02e894c3_b793_4197_b120_3442e08f58d1> ;
+                owl:onProperty <http://emmo.info/emmo#EMMO_bed1d005_b04e_4a90_94cf_02bc678a8569> 
+              ]
+            }}
+        """
+        result = g.query(query_str)
+        results = []
+        for row in result:
+            results.append(row['class'])
+            
+        col3.write(results)
+        # if len(result) == 0:
+        #     col3.write(f"{Term}")
+        # else:
+        #     col3.write("not empty")
+        
+        # for row in result:
+        #     units = row['unit']
+        #     col3.write(units)
+            
+        
+        # unit = col3.selectbox(
+        #     "Unit",
+        #     options=list(closest_matches_sorted),
+        #     key="unit"+name,
+        # )
+        Term = str(label_uri_dict[quantity])
+        query_str = f"""
+            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            
+            SELECT ?o
+            WHERE {{
+                <{Term}> <http://emmo.info/emmo#EMMO_967080e5_2f42_4eb2_a3a9_c58143e835f9> ?o .
+            }}
+        """
+        result = g.query(query_str)
+        
+        col1, col2 = st.columns([1,4])
+        
+        for row in result:
+            elucidation = row['o']
+            col2.write(elucidation)
+
+
+
+    # closest_match = max(label_uri_dict.keys(), key=lambda x: fuzz.ratio(x, label_column))
+    #results[label_column] = closest_match#label_uri_dict[closest_match]
+
+    # for label in labels:
+    #     closest_match = max(label_uri_dict.keys(), key=lambda x: fuzz.ratio(x, label))
+    #     results[label] = label_uri_dict[closest_match]
+
+    # Display the results in the Streamlit app
+    #st.write(labels)
+    #st.write(results)
 
 
 selected_files = st.multiselect('Select options:', options=file_dict, format_func=lambda x: file_dict[x])
