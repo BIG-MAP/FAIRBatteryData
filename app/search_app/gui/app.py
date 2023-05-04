@@ -1,48 +1,55 @@
 import streamlit as st
 
 import views
+import utils
 
 #########################################
 #   ACCESS RESOURCES
 #########################################
 
+@st.cache_data
+def initialize():
+    rdf_full_graph, label_uri_dict, uri_label_dict = utils.load_resources()
 
-option_library = {"Cathode":["LiFePO4", "NMC111", "LNO"], 
-                "Anode":["Graphite", "Silicon", "Si/Gr blend"], 
-                "Author":["Simon Clark", "Eibar Flores", "John Wick"], 
-                "Institution":["CNRS", "SINTEF", "Chalmers", "NTNU"]}
+    option_library = {"name":utils.query_all_schemas(rdf_full_graph, uri_label_dict, schema_type = "name"),
+                    "productionDate":utils.query_all_schemas(rdf_full_graph, uri_label_dict, schema_type = "productionDate"),
+                    "manufacturer":utils.query_all_schemas(rdf_full_graph, uri_label_dict, schema_type = "manufacturer"),
+                    "creator":utils.query_all_schemas(rdf_full_graph, uri_label_dict, schema_type = "creator"),
+                    "material":utils.query_all_materials(rdf_full_graph, uri_label_dict)}
 
-search_types = {"Battery cell":"http://emmo.info/battery#battery_68ed592a_7924_45d0_a108_94d6275d57f0",
-                 "Battery Scientist":"https://schema.org/creator", 
-                 "Battery dataset":"https://schema.org/Dataset"}
-
+    return option_library, rdf_full_graph, label_uri_dict, uri_label_dict
 
 
-
+option_library, rdf_full_graph, label_uri_dict, uri_label_dict = initialize()
 
 
 #########################################
-#   APP HEADER
+#   APP HEADER 
 #########################################
 
 header = views.Header()
 header.render()
 
-
-
-#########################################
-#   APP SEARCH SIDEBAR
-#########################################
-
-resource_type = views.SelectResourceType(concept_list = list(search_types.keys()))
-resource_type.render()
-
-
-
-# instance = views.SelectFilters(ontology_instances=option_library[resource_type.selection])
-# instance.render()
  
 
- #########################################
-#   APP RESULTS
 #########################################
+#   APP SEARCH CRITERIA
+#########################################
+
+search_criterion = views.SelectCriterionAndValue(options = option_library)
+search_criterion.render()
+
+search_requested = st.button("Search")
+
+
+#########################################
+#   APP SEARCH 
+#########################################
+if search_requested:
+    if search_criterion.criterion == "material":
+        results_df = utils.query_cell_by_material(rdf_full_graph, 
+                                     label_uri_dict, 
+                                     uri_label_dict, 
+                                     material_label=search_criterion.value)
+
+        st.dataframe(results_df, 700, 700)

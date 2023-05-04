@@ -2,71 +2,12 @@
 from rdflib import Graph, SKOS, Literal, URIRef, RDF
 import warnings
 
+import pandas as pd
+
 
 
 PATH_JSONLD = "../ontologies/scientific_metadata.json"
 
-######################################
-# IRIs and PREF LABELS
-######################################
-
-def iri_to_preflabel(rdf_graph:Graph, iri:str)-> str:
-    """
-    Queries the triplestore for the IRI supplied, and retrievies its prefLabel if it exists.
-
-    rdf_graph: RDFLib Graph object.
-    iri: IRI of the enetity.
-
-    """
-
-    # (IRI hasPrefLabel prefLable)
-    prefLabel = list(rdf_graph.objects(subject=URIRef(iri), predicate=SKOS.prefLabel))
-
-    if len(prefLabel) == 1:
-        return prefLabel[0].value
-
-    else:
-        warnings.warn(f"""The supplied IRI {iri} has {len(list(prefLabel))} prefLabels: {list(prefLabel)}""")
-        return ""
-
-
-
-def preflabel_to_iri(rdf_graph:Graph, prefLabel:str, lang:str=None) -> str:
-    """
-    Queries the triplestore for the prefLable supplied, and retrievies its IRI if it exists.
-
-    rdf_graph: RDFLib Graph object.
-    prefLabel: The prefLabel of the entity
-    """
-
-    # TODO: What if lang is no? or is it always en?
-    if not lang:
-        prefLabel_literal = Literal(prefLabel)
-    else:
-        prefLabel_literal = Literal(prefLabel, lang='en')
-
-    # Make a list of all IRIs with the prefLabel
-    iri = list(rdf_graph.subjects(predicate=SKOS.prefLabel, object=prefLabel_literal))
-
-    if len(list(iri)) == 1:
-        return str(iri[0])
-    else:
-        warnings.warn(f"""The supplied prefLabel {prefLabel} 
-                         has {len(list(iri))} IRIs: {list(iri)}. Try adding the parameter lang=en""")
-        return ""
-
-
-
-
-
-def all_IRIs(rdf_graph:Graph) -> dict:
-    """
-    Returns a dictionary with all prefLabel:IRI pairs in the triplestore.
-    """
-
-    iris_dict = {str(iri):str(label) for iri, label in rdf_graph.subject_objects(predicate=SKOS.prefLabel)}
- 
-    return iris_dict
 
 
 #######################################
@@ -137,6 +78,17 @@ def load_ontologies():
     return g, label_uri_dict, uri_label_dict
     
 
+def load_resources():
+
+    json_ld_paths = ["../ontologies/scientific_metadata.json"]
+
+    g, label_uri_dict, uri_label_dict = load_ontologies()
+
+
+    g.parse("../ontologies/scientific_metadata.json")
+
+    return g, label_uri_dict, uri_label_dict
+
 
 
 #################################
@@ -148,3 +100,114 @@ def get_all_ld_types():
     metadata_graph = Graph().parse(PATH_JSONLD)
     types_dict = all_types(uri_label_dict, metadata_graph)
     return types_dict
+
+
+
+
+#################################
+#   QUERIES
+################################
+PREFIXES = """
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX emmo: <http://emmo.info/emmo#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX echem: <http://emmo.info/electrochemistry#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/> 
+PREFIX battery: <http://emmo.info/battery#> 
+PREFIX schema:<https://schema.org/>
+"""
+
+
+
+def query_all_schemas(rdf_graph:Graph, uri_label_dict:dict, schema_type:str)->list:
+   
+   supported_schema_entities =  ["name", "productionDate", "manufacturer", "creator"]
+   
+   if schema_type in supported_schema_entities:
+
+        query = PREFIXES + """
+        SELECT ?variable
+        WHERE {{
+            ?instance rdf:type battery:battery_68ed592a_7924_45d0_a108_94d6275d57f0;
+                        schema:{schema} ?variable.
+        }}
+        """.format(schema= schema_type)
+
+        qres = rdf_graph.query(query)
+
+        for result in qres:
+            iris_str = [str(uriref) for uriref in result]
+            iris_labels = [uri_label_dict[iri] if iri in uri_label_dict else iri for iri in iris_str]
+        
+        return [*iris_labels]
+   
+   else:
+       warnings.warn("Schema type not available. Available schema: are {}".format(supported_schema_entities))
+
+
+def query_all_materials(rdf_graph:Graph, uri_label_dict:dict)->list:
+
+    query = PREFIXES  + """
+
+    SELECT ?chemicalmaterial
+    WHERE {
+        ?instance rdf:type battery:battery_68ed592a_7924_45d0_a108_94d6275d57f0;
+                (echem:electrochemistry_8e9cf965_9f92_46e8_b678_b50410ce3616|echem:electrochemistry_5d299271_3f68_494f_ab96_3db9acdd3138) ?something.
+
+        ?something (emmo:EMMO_dba27ca1_33c9_4443_a912_1519ce4c39ec)+ ?material.
+        ?material rdf:type ?chemicalmaterial.
+
+        ?chemicalmaterial rdfs:subClassOf emmo:EMMO_8a41ed1b_64f9_4be7_9b60_01fcece45075.
+    }
+    """
+
+    qres = rdf_graph.query(query)
+
+    materials = {}
+
+    for result in qres:
+        iri_str = str(result[0])
+        iri_label = uri_label_dict[iri_str]
+        if iri_label not in materials:
+            materials[iri_label] = iri_str
+
+    return materials
+
+
+
+
+
+def query_cell_by_material(rdf_graph:Graph, label_uri_dict:dict, uri_label_dict:dict, material_label:str)->pd.DataFrame:
+
+    material_iri = URIRef(label_uri_dict[material_label])
+    print(material_iri)
+
+    query_by_material = PREFIXES  + """
+    SELECT ?instance ?name ?creator ?date
+    WHERE {{
+    ?instance rdf:type battery:battery_68ed592a_7924_45d0_a108_94d6275d57f0;
+              schema:creator ?creator;
+              schema:name ?name;
+              schema:productionDate ?date;
+              (echem:electrochemistry_8e9cf965_9f92_46e8_b678_b50410ce3616|echem:electrochemistry_5d299271_3f68_494f_ab96_3db9acdd3138) ?something.
+
+    ?something (emmo:EMMO_dba27ca1_33c9_4443_a912_1519ce4c39ec)+ ?material.
+    ?material rdf:type <%s>.
+
+    }}
+    """% material_iri    
+
+    results_dict = {"CellID":[], "Cell name":[], "Creator":[], "Date":[], "Material":[]}
+
+    qres = rdf_graph.query(query_by_material)
+    for hit in qres:
+        string_rep = [str(rdf_obj) for rdf_obj in hit]
+        human_rep = [uri_label_dict[string] if string in uri_label_dict else string for string in string_rep]
+        results_dict["CellID"].append(human_rep[0])
+        results_dict["Cell name"].append(human_rep[1])
+        results_dict["Creator"].append(human_rep[2])
+        results_dict["Date"].append(human_rep[3])
+        results_dict["Material"].append(material_label)
+    
+    return pd.DataFrame(results_dict)
