@@ -103,51 +103,51 @@
             "@id": "http://emmo.info/emmo#EMMO_faf79f53_749d_40b2_807c_d34244c192f4"
         }
     },
-    "@type": "PouchCell",
+    "@type": "BatteryCell",
     "schema:name": "Some understandable cell name",
     "schema:productionDate": "2023-05-02",
-    "schema:manufacturer": "https://ror.org/01f677e56",
-    "schema:creator": "https://orcid.org/0000-0002-8758-6109",
+    "schema:manufacturer": "https://ror.org/Organization ROR ID",
+    "schema:creator": "https://orcid.org/Person ORCID",
     "hasQuantitativeProperty": [
         {
             "@type": "Mass",
-            "hasReferenceUnit": "http://emmo.info/emmo#EMMO_9bfd6f1e_b0ce_459c_beb7_8f1f41708bba",
+            "hasReferenceUnit": "http://emmo.info/emmo#EMMO_f992dc76_f9a6_45f6_8873_c8e20d16fbbe",
             "hasQuantityValue": {
                 "@type": "Real",
-                "hasNumericalData": 288.0,
-                "@id": "http://rdf.batterymodel.com/73e41b3d-8e18-4f81-85d5-0bb02f2506d2"
+                "hasNumericalData": 0,
+                "@id": "http://rdf.batterymodel.com/d1d32e51-89dc-4163-8acf-5ad7d0ad94c6"
             },
-            "@id": "http://rdf.batterymodel.com/3151227c-3a12-4e4b-8756-207ea5d1c296"
+            "@id": "http://rdf.batterymodel.com/454a5ad0-65aa-402d-84c8-a363548f5f17"
         },
         {
             "@type": "Width",
             "hasReferenceUnit": "http://emmo.info/emmo#EMMO_24fee2b4_8d10_47b0_9224_51054284cdec",
             "hasQuantityValue": {
                 "@type": "Real",
-                "hasNumericalData": 270.0,
-                "@id": "http://rdf.batterymodel.com/36109890-5396-4376-937c-b399bcc9a7fb"
+                "hasNumericalData": 0,
+                "@id": "http://rdf.batterymodel.com/e3126f18-79bd-4897-b9cb-09715df87c93"
             },
-            "@id": "http://rdf.batterymodel.com/4144166c-6337-45e3-9ab1-fa27dc47de33"
+            "@id": "http://rdf.batterymodel.com/77379497-81f3-494a-9224-f0d4596e11ae"
         },
         {
             "@type": "Height",
             "hasReferenceUnit": "http://emmo.info/emmo#EMMO_24fee2b4_8d10_47b0_9224_51054284cdec",
             "hasQuantityValue": {
                 "@type": "Real",
-                "hasNumericalData": 99.0,
-                "@id": "http://rdf.batterymodel.com/2a3cce35-7502-48b6-8293-caf2a9899c74"
+                "hasNumericalData": 0,
+                "@id": "http://rdf.batterymodel.com/17a434f6-21ef-453f-b52f-fac75274e92b"
             },
-            "@id": "http://rdf.batterymodel.com/af7ee650-1bc9-41cd-9fb7-2cd27e6373e0"
+            "@id": "http://rdf.batterymodel.com/29f0a5ea-8cd3-4f8c-8e43-5e71489167c2"
         },
         {
             "@type": "Thickness",
             "hasReferenceUnit": "http://emmo.info/emmo#EMMO_24fee2b4_8d10_47b0_9224_51054284cdec",
             "hasQuantityValue": {
                 "@type": "Real",
-                "hasNumericalData": 2.8,
-                "@id": "http://rdf.batterymodel.com/fbd2c68a-9f91-4a46-aa2d-aa0025be6269"
+                "hasNumericalData": 0,
+                "@id": "http://rdf.batterymodel.com/cd1f2fa3-d908-4d7e-88f5-f5ba5796f966"
             },
-            "@id": "http://rdf.batterymodel.com/4366729b-7107-49b9-befd-015a59de09eb"
+            "@id": "http://rdf.batterymodel.com/5456d3a5-a973-4092-86be-7cfa47fefb28"
         }
     ],
     "hasPositiveElectrode": {
@@ -158,50 +158,50 @@
                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_41efdf5d_0c9c_4ea0_bb65_f8236e663be5",
                 "hasQuantityValue": {
                     "@type": "Real",
-                    "hasNumericalData": 5,
-                    "@id": "http://rdf.batterymodel.com/e7a34ea3-15f7-41ca-993f-703c9e282c85"
+                    "hasNumericalData": 0,
+                    "@id": "http://rdf.batterymodel.com/891f446b-fd8b-4c1f-a1eb-497733acf521"
                 },
-                "@id": "http://rdf.batterymodel.com/96a7a7ad-1887-4421-b308-5f9c51ed4d03"
+                "@id": "http://rdf.batterymodel.com/f8120d98-afd0-4177-b117-40f06095038b"
             },
             {
                 "@type": "MassLoading",
                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_a38b5d19_6723_4116_acec_ace4dd1c9cf5",
                 "hasQuantityValue": {
                     "@type": "Real",
-                    "hasNumericalData": 27.32,
-                    "@id": "http://rdf.batterymodel.com/bb23f4ff-52db-4d1e-95f6-df392b9daa18"
+                    "hasNumericalData": 0,
+                    "@id": "http://rdf.batterymodel.com/f0c9e277-dbf1-4c90-9563-5af4e8275896"
                 },
-                "@id": "http://rdf.batterymodel.com/f18a067f-e3d3-49ea-a215-3aad6d05ca12"
+                "@id": "http://rdf.batterymodel.com/d2ffedd5-a922-4481-8c91-151a1e765bc2"
             },
             {
                 "@type": "Width",
                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_24fee2b4_8d10_47b0_9224_51054284cdec",
                 "hasQuantityValue": {
                     "@type": "Real",
-                    "hasNumericalData": 270.0,
-                    "@id": "http://rdf.batterymodel.com/18713804-ea0c-450c-a7a7-d87202ec7949"
+                    "hasNumericalData": 0,
+                    "@id": "http://rdf.batterymodel.com/712d5dc9-15d9-4e89-8ca8-2e064465f67f"
                 },
-                "@id": "http://rdf.batterymodel.com/d03fade0-2912-4ad4-9131-7dd1044871e7"
+                "@id": "http://rdf.batterymodel.com/5bb594b9-ce99-4b0b-8265-6be275f894e5"
             },
             {
                 "@type": "Height",
                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_24fee2b4_8d10_47b0_9224_51054284cdec",
                 "hasQuantityValue": {
                     "@type": "Real",
-                    "hasNumericalData": 99.0,
-                    "@id": "http://rdf.batterymodel.com/04ee835e-b149-49c0-b88a-a6d7cd65ea92"
+                    "hasNumericalData": 0,
+                    "@id": "http://rdf.batterymodel.com/9eca8eed-9f0b-4a0b-a654-a3776f897b96"
                 },
-                "@id": "http://rdf.batterymodel.com/64c552f5-4b4d-4043-895c-151fa06091bb"
+                "@id": "http://rdf.batterymodel.com/7456403b-8fd8-4f16-baed-decfc25f9845"
             },
             {
                 "@type": "Thickness",
                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_987a8dff_577b_4521_a969_b60b5c3c12bd",
                 "hasQuantityValue": {
                     "@type": "Real",
-                    "hasNumericalData": 170.0,
-                    "@id": "http://rdf.batterymodel.com/4a4c6c35-0b52-4400-a5aa-77d1f9088eba"
+                    "hasNumericalData": 0,
+                    "@id": "http://rdf.batterymodel.com/d57a2e68-9ce4-4d9a-890f-db92c155d332"
                 },
-                "@id": "http://rdf.batterymodel.com/99dfa8d1-11b1-4ee0-a643-f94eb9abc8f3"
+                "@id": "http://rdf.batterymodel.com/2f16aed9-ded4-4143-a09d-cb5a732e5718"
             },
             {
                 "@type": "Mass",
@@ -209,9 +209,9 @@
                 "hasQuantityValue": {
                     "@type": "Real",
                     "hasNumericalData": [],
-                    "@id": "http://rdf.batterymodel.com/1d573797-7399-4c9c-8b7f-1c76d53083b2"
+                    "@id": "http://rdf.batterymodel.com/0d6515e9-b734-4bff-8494-843421656c81"
                 },
-                "@id": "http://rdf.batterymodel.com/b78e5100-9971-484a-8624-dbd473628902"
+                "@id": "http://rdf.batterymodel.com/071450d9-41fa-4258-aae1-ef7495c48d87"
             }
         ],
         "hasConstituent": [
@@ -223,10 +223,10 @@
                         "hasReferenceUnit": "http://emmo.info/emmo#EMMO_987a8dff_577b_4521_a969_b60b5c3c12bd",
                         "hasQuantityValue": {
                             "@type": "Real",
-                            "hasNumericalData": 10.0,
-                            "@id": "http://rdf.batterymodel.com/7e42c0ca-c20c-480b-8996-5db0ae3c7639"
+                            "hasNumericalData": 0,
+                            "@id": "http://rdf.batterymodel.com/1cfeb9dd-8daf-429b-850e-e20b551f8c85"
                         },
-                        "@id": "http://rdf.batterymodel.com/0da28b0d-ff9b-474a-9da8-20c229ddc2de"
+                        "@id": "http://rdf.batterymodel.com/b83026a6-1333-4402-87cf-f53417008424"
                     },
                     {
                         "@type": "Mass",
@@ -234,11 +234,11 @@
                         "hasQuantityValue": {
                             "@type": "Real",
                             "hasNumericalData": [],
-                            "@id": "http://rdf.batterymodel.com/bf6edb23-33da-4130-a4ee-cd558765d90b"
+                            "@id": "http://rdf.batterymodel.com/20d6aed6-71ca-44ac-9c7b-44f3abb89c17"
                         }
                     }
                 ],
-                "@id": "http://rdf.batterymodel.com/ece5cd3c-007e-4797-9cfc-252ce1fa5847"
+                "@id": "http://rdf.batterymodel.com/f0f601ab-3c8b-49c6-b5f0-3efc0d65260b"
             },
             {
                 "@type": "ElectrodeCoating",
@@ -248,48 +248,48 @@
                         "hasReferenceUnit": "http://emmo.info/emmo#EMMO_987a8dff_577b_4521_a969_b60b5c3c12bd",
                         "hasQuantityValue": {
                             "@type": "Real",
-                            "hasNumericalData": 100.0,
-                            "@id": "http://rdf.batterymodel.com/32076d58-ad5d-4100-abef-bd5fb35da0cb"
+                            "hasNumericalData": 0,
+                            "@id": "http://rdf.batterymodel.com/ed38c82b-fa3b-4bf5-94a9-d10fac2e5277"
                         },
-                        "@id": "http://rdf.batterymodel.com/a7cb0402-a49c-405e-8ad3-baa8cdf46e0c"
+                        "@id": "http://rdf.batterymodel.com/d3654bb4-b096-4d9a-8468-0fac8ff7735f"
                     }
                 ],
                 "hasConstituent": [
                     {
-                        "@type": "LithiumIronPhosphate",
+                        "@type": "LithiumNickelManganeseCobaltOxide",
                         "hasQuantitativeProperty": [
                             {
                                 "@type": "MassFraction",
                                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_18448443_dcf1_49b8_a321_cf46e2c393e1",
                                 "hasQuantityValue": {
                                     "@type": "Real",
-                                    "hasNumericalData": 0.9500000000000001,
-                                    "@id": "http://rdf.batterymodel.com/f431b805-9033-43e4-a8ad-75fa8291bd0e"
+                                    "hasNumericalData": 0,
+                                    "@id": "http://rdf.batterymodel.com/a0fd1c9c-7196-4b50-950e-a2cca1da25b5"
                                 },
-                                "@id": "http://rdf.batterymodel.com/8f988298-3802-4615-856b-fa0eb37ed6c3"
+                                "@id": "http://rdf.batterymodel.com/88b4bc3d-8ad1-4dd0-bb76-3f626da5926c"
                             },
                             {
                                 "@type": "Density",
                                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_ce9be50b_b6a5_49b4_96b0_5b084d064eb3",
                                 "hasQuantityValue": {
                                     "@type": "Real",
-                                    "hasNumericalData": 4.65,
-                                    "@id": "http://rdf.batterymodel.com/01a05ccb-6254-4a03-83b9-bd5b5d3fde1c"
+                                    "hasNumericalData": 0,
+                                    "@id": "http://rdf.batterymodel.com/9de0e2e6-6c24-4a5d-9a2a-a840d6214d48"
                                 },
-                                "@id": "http://rdf.batterymodel.com/c2848674-e7d9-449c-896f-dbc58e2646e6"
+                                "@id": "http://rdf.batterymodel.com/a526a15d-75a5-4211-aa56-cd74554df860"
                             },
                             {
                                 "@type": "SpecificCapacity",
                                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_774923e6_9000_4abe_a730_7972286b57f5",
                                 "hasQuantityValue": {
                                     "@type": "Real",
-                                    "hasNumericalData": 160.0,
-                                    "@id": "http://rdf.batterymodel.com/4eccbc69-2b20-4e02-a519-e9035e187ca8"
+                                    "hasNumericalData": 0,
+                                    "@id": "http://rdf.batterymodel.com/30371aa9-fc0d-4793-9ff1-29c29d95858c"
                                 },
-                                "@id": "http://rdf.batterymodel.com/acdfcc03-077f-4c5b-9572-00e95bede7ef"
+                                "@id": "http://rdf.batterymodel.com/0f76a648-6148-4055-a6e3-64e3f72320bc"
                             }
                         ],
-                        "@id": "http://rdf.batterymodel.com/7d1521f3-d83b-414e-aa79-51528db20321"
+                        "@id": "http://rdf.batterymodel.com/32ae834b-99b2-48e3-8144-09e5e6c2a013"
                     },
                     {
                         "@type": "PolyvinylFluoride",
@@ -299,23 +299,23 @@
                                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_18448443_dcf1_49b8_a321_cf46e2c393e1",
                                 "hasQuantityValue": {
                                     "@type": "Real",
-                                    "hasNumericalData": 0.019999999999999997,
-                                    "@id": "http://rdf.batterymodel.com/e36159eb-cab1-4a96-8ae7-d196d398753b"
+                                    "hasNumericalData": 0,
+                                    "@id": "http://rdf.batterymodel.com/8508002b-cdc0-47ee-a080-f6589b2a9a03"
                                 },
-                                "@id": "http://rdf.batterymodel.com/26862612-ac77-4428-894d-9e6d5414e1e9"
+                                "@id": "http://rdf.batterymodel.com/4f288f36-91e5-4ed7-b327-4419aaa44a30"
                             },
                             {
                                 "@type": "Density",
                                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_ce9be50b_b6a5_49b4_96b0_5b084d064eb3",
                                 "hasQuantityValue": {
                                     "@type": "Real",
-                                    "hasNumericalData": 1.78,
-                                    "@id": "http://rdf.batterymodel.com/0c840c5b-130f-4368-ada2-9bab626110f4"
+                                    "hasNumericalData": 0,
+                                    "@id": "http://rdf.batterymodel.com/1b172f57-59d2-4c86-a14b-1f676fde7af3"
                                 },
-                                "@id": "http://rdf.batterymodel.com/677002db-ebea-464d-a0a4-8dd6b7dee204"
+                                "@id": "http://rdf.batterymodel.com/fc584aa6-08ab-4e4c-ad51-cf6062b61edf"
                             }
                         ],
-                        "@id": "http://rdf.batterymodel.com/9873a5ed-c455-4b05-b204-c628e66dcd19"
+                        "@id": "http://rdf.batterymodel.com/c9a4ebf6-ae13-49d1-b98e-8b24faef8fbc"
                     },
                     {
                         "@type": "CarbonBlack",
@@ -325,29 +325,29 @@
                                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_18448443_dcf1_49b8_a321_cf46e2c393e1",
                                 "hasQuantityValue": {
                                     "@type": "Real",
-                                    "hasNumericalData": 0.03,
-                                    "@id": "http://rdf.batterymodel.com/89ebf59d-f0ee-4566-95d3-9df38a051015"
+                                    "hasNumericalData": 0,
+                                    "@id": "http://rdf.batterymodel.com/dd49d280-df92-4b39-b8aa-ca0228fe1858"
                                 },
-                                "@id": "http://rdf.batterymodel.com/27e4858d-4ad9-44d8-8011-bf1ba7dc990b"
+                                "@id": "http://rdf.batterymodel.com/2148fdf6-d3f1-41fb-8a64-383321eac1f3"
                             },
                             {
                                 "@type": "Density",
                                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_ce9be50b_b6a5_49b4_96b0_5b084d064eb3",
                                 "hasQuantityValue": {
                                     "@type": "Real",
-                                    "hasNumericalData": 1.9,
-                                    "@id": "http://rdf.batterymodel.com/e9c95ba9-2df6-435d-a598-ef4d24b17268"
+                                    "hasNumericalData": 0,
+                                    "@id": "http://rdf.batterymodel.com/46de56b2-3d7b-4f38-a4c2-00b03e8ec708"
                                 },
-                                "@id": "http://rdf.batterymodel.com/0ff240c6-a010-4a0b-a603-7d353be50567"
+                                "@id": "http://rdf.batterymodel.com/fd2371db-bbeb-463a-a6c8-a5feab554cce"
                             }
                         ],
-                        "@id": "http://rdf.batterymodel.com/4440e686-e546-40e7-82ee-3d81b4e00d1e"
+                        "@id": "http://rdf.batterymodel.com/cdcac80d-99c4-48d5-aea2-ad3094116a4e"
                     }
                 ],
-                "@id": "http://rdf.batterymodel.com/7859c0ba-ed93-4e7a-8d6d-0db81d06ef11"
+                "@id": "http://rdf.batterymodel.com/39c2f419-dc23-4e99-85e1-c4cba7d18743"
             }
         ],
-        "@id": "http://rdf.batterymodel.com/9e47ac71-5d95-4227-b91b-c1ec5a19ed3d"
+        "@id": "http://rdf.batterymodel.com/4fd624b3-2525-4ff4-b320-983fc454b57e"
     },
     "hasNegativeElectrode": {
         "@type": "PositiveElectrode",
@@ -357,50 +357,50 @@
                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_41efdf5d_0c9c_4ea0_bb65_f8236e663be5",
                 "hasQuantityValue": {
                     "@type": "Real",
-                    "hasNumericalData": 6,
-                    "@id": "http://rdf.batterymodel.com/7cf1221b-7210-4bf9-b5a8-251ad99516c4"
+                    "hasNumericalData": 0,
+                    "@id": "http://rdf.batterymodel.com/97af2161-50f8-4ca5-9131-478359669544"
                 },
-                "@id": "http://rdf.batterymodel.com/11c8fb41-b114-4373-acb8-af3c5da544f7"
+                "@id": "http://rdf.batterymodel.com/a6e95bf5-0720-4789-95de-ab8d1f40ef08"
             },
             {
                 "@type": "MassLoading",
                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_a38b5d19_6723_4116_acec_ace4dd1c9cf5",
                 "hasQuantityValue": {
                     "@type": "Real",
-                    "hasNumericalData": 16.84,
-                    "@id": "http://rdf.batterymodel.com/f3c2cc75-4cf9-4728-9fcc-96891acd6d05"
+                    "hasNumericalData": 0,
+                    "@id": "http://rdf.batterymodel.com/1cee2eef-6655-4d4b-8891-f2d29ed5ac5a"
                 },
-                "@id": "http://rdf.batterymodel.com/406cd884-bda2-48c3-9f1d-eadeb658eac7"
+                "@id": "http://rdf.batterymodel.com/5cc3bd80-8bda-4c5c-83b8-417e4cddfdd9"
             },
             {
                 "@type": "Width",
                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_24fee2b4_8d10_47b0_9224_51054284cdec",
                 "hasQuantityValue": {
                     "@type": "Real",
-                    "hasNumericalData": 270.0,
-                    "@id": "http://rdf.batterymodel.com/f3ad27cb-3293-427a-b342-500103c24bc1"
+                    "hasNumericalData": 0,
+                    "@id": "http://rdf.batterymodel.com/06376dba-33c1-46db-8454-b3011120b8a3"
                 },
-                "@id": "http://rdf.batterymodel.com/e9f7c183-e1a1-43ee-8277-92be867d6d89"
+                "@id": "http://rdf.batterymodel.com/73803840-466f-4e07-9dcf-3d66c019f869"
             },
             {
                 "@type": "Height",
                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_24fee2b4_8d10_47b0_9224_51054284cdec",
                 "hasQuantityValue": {
                     "@type": "Real",
-                    "hasNumericalData": 99.0,
-                    "@id": "http://rdf.batterymodel.com/81550ea8-5ea4-4eed-97a2-1f50bb3d0e52"
+                    "hasNumericalData": 0,
+                    "@id": "http://rdf.batterymodel.com/77f43c89-7569-457b-9437-cb04f190e65d"
                 },
-                "@id": "http://rdf.batterymodel.com/9559ef13-aa5d-4bbc-85c7-81a249e85a26"
+                "@id": "http://rdf.batterymodel.com/819d61c2-28f8-458f-b121-6eb962f90ddc"
             },
             {
                 "@type": "Thickness",
                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_987a8dff_577b_4521_a969_b60b5c3c12bd",
                 "hasQuantityValue": {
                     "@type": "Real",
-                    "hasNumericalData": 210.0,
-                    "@id": "http://rdf.batterymodel.com/69ee1390-cde4-4a59-bbc5-7d2843212f42"
+                    "hasNumericalData": 0,
+                    "@id": "http://rdf.batterymodel.com/da3b1626-aa0e-492c-8492-fbaa4979997d"
                 },
-                "@id": "http://rdf.batterymodel.com/83870848-a5c1-4e6e-aa55-9d77f19c4da2"
+                "@id": "http://rdf.batterymodel.com/1d7e0619-71fd-4f13-adc7-7f4d2f12e7ad"
             },
             {
                 "@type": "Mass",
@@ -408,9 +408,9 @@
                 "hasQuantityValue": {
                     "@type": "Real",
                     "hasNumericalData": [],
-                    "@id": "http://rdf.batterymodel.com/7418a0de-9446-40aa-8811-7e620cf06fcd"
+                    "@id": "http://rdf.batterymodel.com/16bbeb6a-2518-4dc3-b33f-607429ddeabe"
                 },
-                "@id": "http://rdf.batterymodel.com/ce07805c-e2a3-4f83-b682-a86170a1d3ac"
+                "@id": "http://rdf.batterymodel.com/361cec47-b4b1-4059-8a9e-0f89b6615ec6"
             }
         ],
         "hasConstituent": [
@@ -422,10 +422,10 @@
                         "hasReferenceUnit": "http://emmo.info/emmo#EMMO_987a8dff_577b_4521_a969_b60b5c3c12bd",
                         "hasQuantityValue": {
                             "@type": "Real",
-                            "hasNumericalData": 10.0,
-                            "@id": "http://rdf.batterymodel.com/8fbf6fab-715f-4f82-8abf-724ddc7d610d"
+                            "hasNumericalData": 0,
+                            "@id": "http://rdf.batterymodel.com/3e3d55f3-8995-4fbd-b3cd-b0ba06cb62eb"
                         },
-                        "@id": "http://rdf.batterymodel.com/e5e813b7-f424-43b6-9ef3-a611505bba35"
+                        "@id": "http://rdf.batterymodel.com/14055ac6-1331-41e4-ae58-3c6550a51c8e"
                     },
                     {
                         "@type": "Mass",
@@ -433,11 +433,11 @@
                         "hasQuantityValue": {
                             "@type": "Real",
                             "hasNumericalData": [],
-                            "@id": "http://rdf.batterymodel.com/627f574c-4c69-457c-aef4-1548b495252d"
+                            "@id": "http://rdf.batterymodel.com/dff83880-c411-44f6-8590-5e1b651e233c"
                         }
                     }
                 ],
-                "@id": "http://rdf.batterymodel.com/adab8cf6-25a4-4d52-8f7b-3f7d3e84631e"
+                "@id": "http://rdf.batterymodel.com/939b0d9e-764c-40bf-b57b-b62ac4b98817"
             },
             {
                 "@type": "ElectrodeCoating",
@@ -447,10 +447,10 @@
                         "hasReferenceUnit": "http://emmo.info/emmo#EMMO_987a8dff_577b_4521_a969_b60b5c3c12bd",
                         "hasQuantityValue": {
                             "@type": "Real",
-                            "hasNumericalData": 100.0,
-                            "@id": "http://rdf.batterymodel.com/b30b1571-fdc7-4c8c-af59-6e6e26471452"
+                            "hasNumericalData": 0,
+                            "@id": "http://rdf.batterymodel.com/1e20ee14-024c-419d-a15a-1c24f339a9ce"
                         },
-                        "@id": "http://rdf.batterymodel.com/7358f72d-707a-40dc-a50b-a584c80e857c"
+                        "@id": "http://rdf.batterymodel.com/3f340bee-eead-452c-b1c3-84e80aa1d4ea"
                     }
                 ],
                 "hasConstituent": [
@@ -462,59 +462,59 @@
                                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_18448443_dcf1_49b8_a321_cf46e2c393e1",
                                 "hasQuantityValue": {
                                     "@type": "Real",
-                                    "hasNumericalData": 0.94,
-                                    "@id": "http://rdf.batterymodel.com/c4ce7fc1-997d-42e9-9547-8baa4a5af7a5"
+                                    "hasNumericalData": 0,
+                                    "@id": "http://rdf.batterymodel.com/368c1c43-9cb0-4db2-aad5-7dc2f73795e4"
                                 },
-                                "@id": "http://rdf.batterymodel.com/b4c0e2d3-f133-41f5-a185-40a0a86b1388"
+                                "@id": "http://rdf.batterymodel.com/705708d5-017f-4c3a-87b7-9f4f280f1451"
                             },
                             {
                                 "@type": "Density",
                                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_ce9be50b_b6a5_49b4_96b0_5b084d064eb3",
                                 "hasQuantityValue": {
                                     "@type": "Real",
-                                    "hasNumericalData": 2.24,
-                                    "@id": "http://rdf.batterymodel.com/f4e01074-d5da-4a71-b1e8-dbd69702d400"
+                                    "hasNumericalData": 2,
+                                    "@id": "http://rdf.batterymodel.com/f408df2b-5868-4fed-a855-b6cad7b68dd3"
                                 },
-                                "@id": "http://rdf.batterymodel.com/9d0fbdd8-600c-408b-ba66-2cd1ea310506"
+                                "@id": "http://rdf.batterymodel.com/a030b22f-0eea-4f0f-aa43-d0779b0e7b8b"
                             },
                             {
                                 "@type": "SpecificCapacity",
                                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_774923e6_9000_4abe_a730_7972286b57f5",
                                 "hasQuantityValue": {
                                     "@type": "Real",
-                                    "hasNumericalData": 329.0,
-                                    "@id": "http://rdf.batterymodel.com/9ce04e13-97e2-4678-9da9-5d1c79b4d4d9"
+                                    "hasNumericalData": 0,
+                                    "@id": "http://rdf.batterymodel.com/a4aa84d9-3ea7-4fcb-a6b3-76b0a2cce713"
                                 },
-                                "@id": "http://rdf.batterymodel.com/d4e7dd68-2871-4680-9263-0ffe753e0085"
+                                "@id": "http://rdf.batterymodel.com/97118687-047b-47f5-aedb-d67b09a3143b"
                             }
                         ],
-                        "@id": "http://rdf.batterymodel.com/9dde43d9-3b53-461a-9ef3-8118fbc5d08d"
+                        "@id": "http://rdf.batterymodel.com/45730886-c304-4554-923b-db9a4fae9d6d"
                     },
                     {
-                        "@type": "PolyvinylFluoride",
+                        "@type": "CarboxymethylCellulose",
                         "hasQuantitativeProperty": [
                             {
                                 "@type": "MassFraction",
                                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_18448443_dcf1_49b8_a321_cf46e2c393e1",
                                 "hasQuantityValue": {
                                     "@type": "Real",
-                                    "hasNumericalData": 0.04,
-                                    "@id": "http://rdf.batterymodel.com/9c5c8da4-7353-4ccb-ac6e-3bb3ae961c0b"
+                                    "hasNumericalData": 0,
+                                    "@id": "http://rdf.batterymodel.com/fb3f30d7-2ae7-4f49-bd16-333b402aa200"
                                 },
-                                "@id": "http://rdf.batterymodel.com/45308390-80f3-46d2-bce8-e035464cc537"
+                                "@id": "http://rdf.batterymodel.com/4c13ca50-75fa-4546-bc6f-e9bff66f3b39"
                             },
                             {
                                 "@type": "Density",
                                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_ce9be50b_b6a5_49b4_96b0_5b084d064eb3",
                                 "hasQuantityValue": {
                                     "@type": "Real",
-                                    "hasNumericalData": 1.6,
-                                    "@id": "http://rdf.batterymodel.com/f240af09-670b-4549-b56e-db52d9956ca1"
+                                    "hasNumericalData": 0,
+                                    "@id": "http://rdf.batterymodel.com/0be627e3-ad46-47de-bdcc-b1da4ce800cd"
                                 },
-                                "@id": "http://rdf.batterymodel.com/a0254851-a8dd-44e6-871d-f0d0f53c0268"
+                                "@id": "http://rdf.batterymodel.com/18aebe48-a1cd-469f-acee-9cb2029444b4"
                             }
                         ],
-                        "@id": "http://rdf.batterymodel.com/a8a1934f-4c8f-404a-8c7f-1f50f6f569ce"
+                        "@id": "http://rdf.batterymodel.com/04327064-0248-4834-8d39-658b5574d210"
                     },
                     {
                         "@type": "CarbonBlack",
@@ -524,29 +524,29 @@
                                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_18448443_dcf1_49b8_a321_cf46e2c393e1",
                                 "hasQuantityValue": {
                                     "@type": "Real",
-                                    "hasNumericalData": 0.02,
-                                    "@id": "http://rdf.batterymodel.com/a1f894d8-c70f-42ee-9d27-efbf2ee21088"
+                                    "hasNumericalData": 0,
+                                    "@id": "http://rdf.batterymodel.com/2d641989-2180-46a5-8d5e-785ca542c3a6"
                                 },
-                                "@id": "http://rdf.batterymodel.com/7a257919-6682-4144-9612-4f2fb165654f"
+                                "@id": "http://rdf.batterymodel.com/8817c1c2-855d-4684-b091-e11a9ff93a5e"
                             },
                             {
                                 "@type": "Density",
                                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_ce9be50b_b6a5_49b4_96b0_5b084d064eb3",
                                 "hasQuantityValue": {
                                     "@type": "Real",
-                                    "hasNumericalData": 1.9,
-                                    "@id": "http://rdf.batterymodel.com/d07ae16a-25c1-4f97-839a-4c6ac9630680"
+                                    "hasNumericalData": 0,
+                                    "@id": "http://rdf.batterymodel.com/fd4049fb-d679-4da1-b460-8e7347f1f097"
                                 },
-                                "@id": "http://rdf.batterymodel.com/df679da7-78e2-42ce-aa63-d5872aa446b7"
+                                "@id": "http://rdf.batterymodel.com/edb0b45e-f38b-4834-aeb9-32b731fe81cd"
                             }
                         ],
-                        "@id": "http://rdf.batterymodel.com/f552bfb3-7d1b-4d71-a79b-abdae82e3483"
+                        "@id": "http://rdf.batterymodel.com/7c4bb8de-32c2-42c6-a0c7-fbe6a0e07042"
                     }
                 ],
-                "@id": "http://rdf.batterymodel.com/f4ebb966-9882-4bbf-9d01-9269218d93cb"
+                "@id": "http://rdf.batterymodel.com/1e5a4f0a-2c81-46d2-b2ba-67ec299e61ea"
             }
         ],
-        "@id": "http://rdf.batterymodel.com/1efe3c91-d578-455f-913c-55a7960f342b"
+        "@id": "http://rdf.batterymodel.com/80cada7d-5990-4eb1-96c0-e46e8d94135b"
     },
     "hasSeparator": {
         "@type": "Separator",
@@ -556,53 +556,53 @@
                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_f992dc76_f9a6_45f6_8873_c8e20d16fbbe",
                 "hasQuantityValue": {
                     "@type": "Real",
-                    "hasNumericalData": 0.95,
-                    "@id": "http://rdf.batterymodel.com/c19a634d-c233-431f-a6ff-4ee8efc97d3b"
+                    "hasNumericalData": 0,
+                    "@id": "http://rdf.batterymodel.com/a47758d6-22be-416b-a36d-b1a59fdce38a"
                 },
-                "@id": "http://rdf.batterymodel.com/6e22703e-e34c-4dac-ae17-377bcc2c72ed"
+                "@id": "http://rdf.batterymodel.com/bfd53d93-6938-45ab-b082-82f926aa1cd3"
             },
             {
                 "@type": "Width",
                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_24fee2b4_8d10_47b0_9224_51054284cdec",
                 "hasQuantityValue": {
                     "@type": "Real",
-                    "hasNumericalData": 270.0,
-                    "@id": "http://rdf.batterymodel.com/9c699f19-f2d0-47d8-b150-271748dbd605"
+                    "hasNumericalData": 0,
+                    "@id": "http://rdf.batterymodel.com/104f54f1-1910-4e8e-bb81-8d2e2f9b2abd"
                 },
-                "@id": "http://rdf.batterymodel.com/7119de63-d7dd-44e7-beaa-fcf5ac1a0058"
+                "@id": "http://rdf.batterymodel.com/69053674-ddae-4654-b4c6-b2a325eca683"
             },
             {
                 "@type": "Height",
                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_24fee2b4_8d10_47b0_9224_51054284cdec",
                 "hasQuantityValue": {
                     "@type": "Real",
-                    "hasNumericalData": 99.0,
-                    "@id": "http://rdf.batterymodel.com/35484e90-492b-4062-a9ad-ee82883cba45"
+                    "hasNumericalData": 0,
+                    "@id": "http://rdf.batterymodel.com/79a09b0f-c092-4602-a7f5-f38523effa42"
                 },
-                "@id": "http://rdf.batterymodel.com/b7297d7c-8a23-4bf3-b648-98bffdbfcc5a"
+                "@id": "http://rdf.batterymodel.com/a3511853-55a0-4136-83fd-4c60037e97c1"
             },
             {
                 "@type": "Thickness",
                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_987a8dff_577b_4521_a969_b60b5c3c12bd",
                 "hasQuantityValue": {
                     "@type": "Real",
-                    "hasNumericalData": 50.0,
-                    "@id": "http://rdf.batterymodel.com/60513abb-7588-4254-91e5-439b66d800b7"
+                    "hasNumericalData": 0,
+                    "@id": "http://rdf.batterymodel.com/ff25324c-76c1-4d4b-b3ac-462309872b25"
                 },
-                "@id": "http://rdf.batterymodel.com/54b450b9-f335-4d62-bd9d-f04154e967c4"
+                "@id": "http://rdf.batterymodel.com/5dd43b10-f434-46e5-b4b2-6b7ed64bc301"
             },
             {
                 "@type": "Porosity",
                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_9fd1e79d_41d1_44f8_8142_66dbdf0fc7ad",
                 "hasQuantityValue": {
                     "@type": "Real",
-                    "hasNumericalData": 0.51,
-                    "@id": "http://rdf.batterymodel.com/815dd181-af16-43c6-918c-1570d72eccab"
+                    "hasNumericalData": 0,
+                    "@id": "http://rdf.batterymodel.com/c39510b9-de68-4753-ba5d-5f8662d913a6"
                 },
-                "@id": "http://rdf.batterymodel.com/aa3e4139-6630-4ac0-a7fe-569adadf599e"
+                "@id": "http://rdf.batterymodel.com/e3ea44d9-7cac-4c7a-b500-672377a867f7"
             }
         ],
-        "@id": "http://rdf.batterymodel.com/ccef10b2-4e74-48b5-93d8-8dfbcf75052f"
+        "@id": "http://rdf.batterymodel.com/61ff1c8e-a3af-4547-a717-19bea627c929"
     },
     "hasElectrolyte": {
         "@type": "ElectrolyteSolution",
@@ -612,10 +612,10 @@
                 "hasReferenceUnit": "http://emmo.info/emmo#EMMO_25b3712d_d4cc_477b_b127_32da36fdd28e",
                 "hasQuantityValue": {
                     "@type": "Real",
-                    "hasNumericalData": 0.0,
-                    "@id": "http://rdf.batterymodel.com/55e21cd1-17e4-4836-9177-1b548916766d"
+                    "hasNumericalData": 0,
+                    "@id": "http://rdf.batterymodel.com/c42e8f9c-75d7-45f3-bd51-6b44a049fd0a"
                 },
-                "@id": "http://rdf.batterymodel.com/ed30ced3-39ae-4daa-9eb4-e57db244ba22"
+                "@id": "http://rdf.batterymodel.com/d307ca24-6e8b-4936-b72b-9c4273c8ae0c"
             }
         ],
         "hasConstituent": [
@@ -627,32 +627,48 @@
                         "hasReferenceUnit": "http://emmo.info/emmo#EMMO_630acb48_c5c8_4b11_9d76_1342d7ed946f",
                         "hasQuantityValue": {
                             "@type": "Real",
-                            "hasNumericalData": 0.0,
-                            "@id": "http://rdf.batterymodel.com/b0f0f010-ac89-4737-98d3-2fdaa7948b10"
+                            "hasNumericalData": 0,
+                            "@id": "http://rdf.batterymodel.com/cb2b6169-638f-4147-a465-4031fa8bf5b9"
                         },
-                        "@id": "http://rdf.batterymodel.com/dd15ac7c-42f4-48b1-954e-5490f28c9dcd"
+                        "@id": "http://rdf.batterymodel.com/e35cd3ef-9820-43b3-b269-7fd484b8a3aa"
                     }
                 ],
-                "@id": "http://rdf.batterymodel.com/e85f5625-4189-4266-bc2c-e36175066bd7"
+                "@id": "http://rdf.batterymodel.com/4c28d590-b0ad-47e9-8ddf-8b9f459fdb99"
             },
             {
                 "@type": "ChemicalMaterial",
                 "hasQuantitativeProperty": [
                     {
-                        "@type": "AmountConcentration",
-                        "hasReferenceUnit": "http://emmo.info/emmo#EMMO_630acb48_c5c8_4b11_9d76_1342d7ed946f",
+                        "@type": "MassFraction",
+                        "hasReferenceUnit": "http://emmo.info/emmo#EMMO_18448443_dcf1_49b8_a321_cf46e2c393e1",
                         "hasQuantityValue": {
                             "@type": "Real",
-                            "hasNumericalData": 0.0,
-                            "@id": "http://rdf.batterymodel.com/b2ed9a01-4068-42f0-b82c-cbb7df52e6bc"
+                            "hasNumericalData": 0,
+                            "@id": "http://rdf.batterymodel.com/19906cee-940e-4821-ab67-93ee208edd1e"
                         },
-                        "@id": "http://rdf.batterymodel.com/bf9ab0d7-6376-43b2-aacc-edf850ce7070"
+                        "@id": "http://rdf.batterymodel.com/8d23ebbe-24f9-4aa8-b090-c31c998182c8"
                     }
                 ],
-                "@id": "http://rdf.batterymodel.com/788ca084-fce7-432a-a9ff-7c770282291f"
+                "@id": "http://rdf.batterymodel.com/4a6ce10e-0d03-4262-a7f5-e051ff1e7edf"
+            },
+            {
+                "@type": "ChemicalMaterial",
+                "hasQuantitativeProperty": [
+                    {
+                        "@type": "MassFraction",
+                        "hasReferenceUnit": "http://emmo.info/emmo#EMMO_18448443_dcf1_49b8_a321_cf46e2c393e1",
+                        "hasQuantityValue": {
+                            "@type": "Real",
+                            "hasNumericalData": 0,
+                            "@id": "http://rdf.batterymodel.com/4e030856-69c2-4743-baa7-c7e23162e6b3"
+                        },
+                        "@id": "http://rdf.batterymodel.com/caa982db-1a16-4f7a-8a27-e9fcf7ea003b"
+                    }
+                ],
+                "@id": "http://rdf.batterymodel.com/b9780021-bfcd-48f3-9e1c-a23fc941c43b"
             }
         ],
-        "@id": "http://rdf.batterymodel.com/78b09327-0e65-4fa6-bf4d-f41a762e1219"
+        "@id": "http://rdf.batterymodel.com/3a4a0f1a-e3cf-4b4c-89e3-e64e3dee65b0"
     },
-    "@id": "http://rdf.batterymodel.com/f7742a98-0193-475d-9688-c15addaa3c40"
+    "@id": "http://rdf.batterymodel.com/96a8c962-cf63-40bf-a6c0-15f7b078e3e3"
 }
