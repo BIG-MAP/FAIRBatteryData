@@ -3,6 +3,7 @@ import pandas as pd
 import json
 from rdflib import Graph, URIRef, Namespace, Literal
 from rdflib.namespace import RDF, RDFS, SKOS
+import requests
 
 @st.cache_data
 def load_ontology():
@@ -190,6 +191,63 @@ def get_datasets(g, iri):
 
     return str(datasets[0])
 
+def get_dataset_url(g, iri):
+    accessURL = []
+    query_text = f"""
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX schema: <https://schema.org/>
+    PREFIX dcterms: <http://purl.org/dc/terms/>
+    PREFIX qb: <http://purl.org/linked-data/cube#>
+    PREFIX dcat: <http://www.w3.org/ns/dcat#>
+    SELECT ?o
+    WHERE {{
+    <{iri}> dcat:accessURL ?o .
+    }}
+    """
+    #?ds dcterms:subject <{iri}> .
+    results = g.query(query_text)
+    for row in results:
+        accessURL.append(row.o)
+
+    return str(accessURL[0])
+
+def get_time_column(g, iri):
+    order = []
+    query_text = f"""
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX schema: <https://schema.org/>
+    PREFIX dcterms: <http://purl.org/dc/terms/>
+    PREFIX qb: <http://purl.org/linked-data/cube#>
+    PREFIX dcat: <http://www.w3.org/ns/dcat#>
+    PREFIX echem: <http://emmo.info/electrochemistry#>
+    SELECT ?o
+    WHERE {{
+    <{iri}> dcat:structure ?struct .
+    ?struct dcat:component ?comp .
+    ?comp qb:dimension ?d .
+    ?comp qb:order ?o
+    }}
+    """
+    #?ds dcterms:subject <{iri}> .
+    results = g.query(query_text)
+    for row in results:
+        order.append(row.o)
+
+    return str(order)
+
+def download_dataset(url):
+    # Load the CSV data into a Pandas DataFrame
+    df = pd.read_csv(url)
+
+    # Display the DataFrame in Streamlit
+    st.write(df)
+    return df
+
+def plot_time_voltage(g, iri, df):
+    # get the order of the time and voltage from the metadata
+    order = get_time_column(g, iri)
+    st.write(order)
+
 
 def get_data(g, cell_iri, uri_label_dict):
     name = get_cell_name(g, cell_iri)
@@ -197,6 +255,7 @@ def get_data(g, cell_iri, uri_label_dict):
     manufacturer = get_manufacturer(g, cell_iri)
     format = uri_label_dict[get_format(g, cell_iri)].replace("Cell", "")
     datasets = get_datasets(g, cell_iri)
+    accessURL = get_dataset_url(g, datasets)
     #pe_material = uri_label_dict[get_positive_active_material(g, cell_iri)]
 
     #format = "Coin"
@@ -220,7 +279,8 @@ def get_data(g, cell_iri, uri_label_dict):
         "creator": creator,
         "manufacturer": manufacturer,
         "reference": reference,
-        "datasets": datasets
+        "datasets": datasets, 
+        "accessURL": accessURL
     }
 
 g, label_uri_dict, uri_label_dict = load_ontology()
@@ -258,6 +318,9 @@ with st.expander("Production Details"):
 
 with st.expander("Datasets"):
     st.write(dict["datasets"])
+    df = download_dataset(dict["accessURL"])
+    plot_time_voltage(json_g, dict["datasets"], df)
+
 
 with st.expander("References"):
     st.text_input("Reference", value=dict["reference"], disabled=True)
