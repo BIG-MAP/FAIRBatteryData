@@ -3,6 +3,8 @@ from pathlib import Path
 import json
 import uuid
 import datetime
+import pandas as pd
+import re
 import plotly.express as px
 
 from collections import defaultdict
@@ -26,6 +28,7 @@ def load_ontology():
     electrochemistry            = 'https://raw.githubusercontent.com/emmo-repo/domain-electrochemistry/master/electrochemistry.ttl'
     battery_quantities          = 'https://raw.githubusercontent.com/emmo-repo/domain-battery/master/batteryquantities.ttl'
     battery                     = 'https://raw.githubusercontent.com/emmo-repo/domain-battery/master/battery.ttl'
+    materials                   = 'https://raw.githubusercontent.com/emmo-repo/domain-electrochemistry/master/material_bigmap_temp.ttl'
 
     kg_path_mod                 = 'https://raw.githubusercontent.com/BIG-MAP/FAIRBatteryData/json-ld/app/kg-battery-mod.ttl'
     experts                     = 'https://raw.githubusercontent.com/BIG-MAP/FAIRBatteryData/json-ld/app/BatteryExperts.ttl'
@@ -38,6 +41,7 @@ def load_ontology():
     g.parse(electrochemistry, format='ttl')
     g.parse(battery_quantities, format='ttl')
     g.parse(battery, format='ttl')
+    g.parse(materials, format='ttl')
     g.parse(kg_path_mod, format='ttl')
     g.parse(experts, format='ttl')
     
@@ -82,7 +86,10 @@ unit_prefLabel = {"kg": "Kilogram", "g": "Gram",
              "Wh/L": "WattHourPerLitre", 
              "mol/L": "MolePerLitre", "mol/m3": "MolePerCubicMetre",
              "mol/kg": "MolePerKilogram",
-             "mass fraction": "MassFractionUnit"}
+             "mass fraction": "MassFractionUnit", 
+             "V": "Volt", "mV": "Millivolt",
+             "A": "Ampere", "mA": "Milliampere", 
+             "s": "Second", "min": "Minute", "h": "Hour"}
 
 material_prefLabel = {"LFP" : "LithiumIronPhosphate", 
                       "LCO": "LithiumCobaltOxide",
@@ -109,67 +116,256 @@ material_prefLabel = {"LFP" : "LithiumIronPhosphate",
                       "FEC": "FluoroethyleneCarbonate"}
 
 material_abbreviations = flipped_dict = {v: k for k, v in material_prefLabel.items()}
+unit_abbreviations = flipped_dict = {v: k for k, v in unit_prefLabel.items()}
 
-def load_default_values():
+priority_quantities = [#"Record", 
+                       "TestTime", 
+                       #"StepTime", 
+                       "CellVoltage", 
+                       "CellCurrent", 
+                       "Capacity", 
+                       "SpecificCapacity", 
+                       "Energy", 
+                       "CycleNumber", 
+                       #"CapacityOfCharge", 
+                       #"CapacityOfDischarge", 
+                       #"StateOfHealth"
+                       ]
+priority_quantities_units = {#"Record": ["PureNumberUnit"],
+                             "TestTime": ["s", "min", "h"], 
+                             #"StepTime": ["s", "min", "h"],
+                             "CellVoltage": ["V", "mV"],
+                             "CellCurrent": ["A", "mA"],
+                             "Capacity": ["Ah", "mAh"],
+                             "SpecificCapacity": ["Ah/kg", "mAh/g"],
+                             "Energy": ["Wh", "mWh"],
+                             "CycleNumber": ["PureNumberUnit"],
+                             #"ChargeCapacity": ["Ah", "mAh"],
+                             #"DischargeCapacity": ["Ah", "mAh"],
+                             #"StateOfHealth": ["%"]
+                             }
+with open('defaults.json', 'r') as f:
+    json_string = f.read()
+default_dict = json.loads(json_string)
+#st.write(default_dict)
 
-    cell_properties_default_values = {
+
+def load_from_file():
+    agree = st.checkbox('Load from file')
+    json_dict = {}
+    if agree:
+        uploaded_file = st.file_uploader("Upload a JSON-LD metadata profile", accept_multiple_files=False)
+        if uploaded_file is not None:
+            content = uploaded_file.read()
+            json_dict = json.loads(content.decode('utf-8'))
+    return json_dict
+
+def load_default_values(input_dict):
+    #st.write(input_dict)
+
+    #cell_format = {"format": "Pouch"}
+    loaded_format = input_dict["@type"].replace("Cell", "")
+    if loaded_format != "Battery":
+        cell_format = {"format": loaded_format}
+    else:
+        cell_format = {"format": "Pouch"}
+
+    #st.write(cell_format)
+
+    if cell_format["format"] == "Coin" or cell_format["format"] == "Cylindrical":
+        cell_properties_default_values = {
         "mass": {
-            "value": 123,
-            "unit": "g"
+            "value": input_dict["hasQuantitativeProperty"][0]["hasQuantityValue"]["hasNumericalData"],
+            "unit": unit_abbreviations[uri_label_dict[input_dict["hasQuantitativeProperty"][0]["hasReferenceUnit"]]]
         },
-        "width": {
-            "value": 123,
-            "unit": "mm"
+        "diameter": {
+            "value": input_dict["hasQuantitativeProperty"][1]["hasQuantityValue"]["hasNumericalData"],
+            "unit": unit_abbreviations[uri_label_dict[input_dict["hasQuantitativeProperty"][1]["hasReferenceUnit"]]]
         },
         "height": {
-            "value": 123,
-            "unit": "mm"
-        },
-        "thickness": {
-            "value": 123,
-            "unit": "micron"
+            "value": input_dict["hasQuantitativeProperty"][1]["hasQuantityValue"]["hasNumericalData"],
+            "unit": unit_abbreviations[uri_label_dict[input_dict["hasQuantitativeProperty"][2]["hasReferenceUnit"]]]
         }}
-    
+    else:
+        cell_properties_default_values = {
+            "mass": {
+                "value": input_dict["hasQuantitativeProperty"][0]["hasQuantityValue"]["hasNumericalData"],
+                "unit": unit_abbreviations[uri_label_dict[input_dict["hasQuantitativeProperty"][0]["hasReferenceUnit"]]]
+            },
+            "width": {
+                "value": input_dict["hasQuantitativeProperty"][1]["hasQuantityValue"]["hasNumericalData"],
+                "unit": unit_abbreviations[uri_label_dict[input_dict["hasQuantitativeProperty"][1]["hasReferenceUnit"]]]
+            },
+            "height": {
+                "value": input_dict["hasQuantitativeProperty"][2]["hasQuantityValue"]["hasNumericalData"],
+                "unit": unit_abbreviations[uri_label_dict[input_dict["hasQuantitativeProperty"][2]["hasReferenceUnit"]]]
+            },
+            "thickness": {
+                "value": input_dict["hasQuantitativeProperty"][3]["hasQuantityValue"]["hasNumericalData"],
+                "unit": unit_abbreviations[uri_label_dict[input_dict["hasQuantitativeProperty"][3]["hasReferenceUnit"]]]
+            }}
+
     cell_production_default_values = {
-           "name": "An understandable cell name", 
-           "productionDate": "2023-04-01",
-           "creator": "The ORCID of the person", 
-           "manufacturer": "The ROR ID of the organization"}
+           "name": input_dict["schema:name"] , 
+           "productionDate": input_dict["schema:productionDate"] ,
+           "creator": input_dict["schema:creator"].replace("https://orcid.org/", ""), 
+           "manufacturer": input_dict["schema:manufacturer"].replace("https://ror.org/", "") }
     
+    # Positive Electrode Default Values
     pe_am_default_values = {
         "active_material": {"value": "NMC"}, 
         "specific_capacity": {
-            "value": 123, 
-            "unit": "mAh/g"}, 
+            "value": input_dict["hasPositiveElectrode"]["hasConstituent"][1]["hasConstituent"][0]["hasQuantitativeProperty"][2]["hasQuantityValue"]["hasNumericalData"], 
+            "unit": unit_abbreviations[uri_label_dict[input_dict["hasPositiveElectrode"]["hasConstituent"][1]["hasConstituent"][0]["hasQuantitativeProperty"][2]["hasReferenceUnit"]]]}, 
         "am_density": {
-            "value": 1, 
-            "unit": "g/cm3"}}
+            "value": input_dict["hasPositiveElectrode"]["hasConstituent"][1]["hasConstituent"][0]["hasQuantitativeProperty"][1]["hasQuantityValue"]["hasNumericalData"], 
+            "unit": unit_abbreviations[uri_label_dict[input_dict["hasPositiveElectrode"]["hasConstituent"][1]["hasConstituent"][0]["hasQuantitativeProperty"][1]["hasReferenceUnit"]]]}}
     
     pe_binder_default_values = {
         "binder": {"value": "PVDF"}, 
         "binder_density": {
-            "value": 1, 
-            "unit": "g/cm3"}}
+            "value": input_dict["hasPositiveElectrode"]["hasConstituent"][1]["hasConstituent"][1]["hasQuantitativeProperty"][1]["hasQuantityValue"]["hasNumericalData"], 
+            "unit": unit_abbreviations[uri_label_dict[input_dict["hasPositiveElectrode"]["hasConstituent"][1]["hasConstituent"][1]["hasQuantitativeProperty"][1]["hasReferenceUnit"]]]}}
     
     pe_additive_default_values = {
         "additive": {"value": "Carbon Black"}, 
         "additive_density": {
-            "value": 1, 
-            "unit": "g/cm3"}}
+            "value": input_dict["hasPositiveElectrode"]["hasConstituent"][1]["hasConstituent"][2]["hasQuantitativeProperty"][1]["hasQuantityValue"]["hasNumericalData"], 
+            "unit": unit_abbreviations[uri_label_dict[input_dict["hasPositiveElectrode"]["hasConstituent"][1]["hasConstituent"][2]["hasQuantitativeProperty"][1]["hasReferenceUnit"]]]}}
     
     pe_coating_default_values = {
-        "am_mass_fraction": {"value": 0.9}, 
-        "binder_mass_fraction": {"value": 0.05}, 
-        "additive_mass_fraction": {"value": 0.05}, 
+        "am_mass_fraction": {"value": input_dict["hasPositiveElectrode"]["hasConstituent"][1]["hasConstituent"][0]["hasQuantitativeProperty"][0]["hasQuantityValue"]["hasNumericalData"]}, 
+        "binder_mass_fraction": {"value": input_dict["hasPositiveElectrode"]["hasConstituent"][1]["hasConstituent"][1]["hasQuantitativeProperty"][0]["hasQuantityValue"]["hasNumericalData"]}, 
+        "additive_mass_fraction": {"value": input_dict["hasPositiveElectrode"]["hasConstituent"][1]["hasConstituent"][2]["hasQuantitativeProperty"][0]["hasQuantityValue"]["hasNumericalData"]}, 
         "coating_thickness": {
-            "value": 100, 
-            "unit": "micron"}, 
+            "value": input_dict["hasPositiveElectrode"]["hasConstituent"][1]["hasQuantitativeProperty"][0]["hasQuantityValue"]["hasNumericalData"], 
+            "unit": unit_abbreviations[uri_label_dict[input_dict["hasPositiveElectrode"]["hasConstituent"][1]["hasQuantitativeProperty"][0]["hasReferenceUnit"]]]}, 
         "mass_loading": {
-            "value": 10, 
-            "unit": "mg/cm2"}}
+            "value": input_dict["hasPositiveElectrode"]["hasQuantitativeProperty"][1]["hasQuantityValue"]["hasNumericalData"], 
+            "unit": unit_abbreviations[uri_label_dict[input_dict["hasPositiveElectrode"]["hasQuantitativeProperty"][1]["hasReferenceUnit"]]]}}
+    
+    pe_current_collector_default_values = {
+        "current_collector_thickness": {
+            "value": input_dict["hasPositiveElectrode"]["hasConstituent"][0]["hasQuantitativeProperty"][0]["hasQuantityValue"]["hasNumericalData"], 
+            "unit": unit_abbreviations[uri_label_dict[input_dict["hasPositiveElectrode"]["hasConstituent"][0]["hasQuantitativeProperty"][0]["hasReferenceUnit"]]]}}
+    
+    if cell_format["format"] == "Coin":
+        pe_dimensions_default_values = {
+        "electrode_layers": {"value":input_dict["hasPositiveElectrode"]["hasQuantitativeProperty"][0]["hasQuantityValue"]["hasNumericalData"]},
+        "electrode_diameter": {
+            "value": input_dict["hasPositiveElectrode"]["hasQuantitativeProperty"][2]["hasQuantityValue"]["hasNumericalData"] , 
+            "unit": unit_abbreviations[uri_label_dict[input_dict["hasPositiveElectrode"]["hasQuantitativeProperty"][2]["hasReferenceUnit"]]]},
+        "electrode_thickness": {
+            "value": input_dict["hasPositiveElectrode"]["hasQuantitativeProperty"][3]["hasQuantityValue"]["hasNumericalData"], 
+            "unit": unit_abbreviations[uri_label_dict[input_dict["hasPositiveElectrode"]["hasQuantitativeProperty"][3]["hasReferenceUnit"]]]}}
+    else:
+        pe_dimensions_default_values = {
+            "electrode_layers": {"value":input_dict["hasPositiveElectrode"]["hasQuantitativeProperty"][0]["hasQuantityValue"]["hasNumericalData"]},
+            "electrode_width": {
+                "value": input_dict["hasPositiveElectrode"]["hasQuantitativeProperty"][2]["hasQuantityValue"]["hasNumericalData"], 
+                "unit": unit_abbreviations[uri_label_dict[input_dict["hasPositiveElectrode"]["hasQuantitativeProperty"][2]["hasReferenceUnit"]]]},
+            "electrode_height": {
+                "value": input_dict["hasPositiveElectrode"]["hasQuantitativeProperty"][3]["hasQuantityValue"]["hasNumericalData"], 
+                "unit": unit_abbreviations[uri_label_dict[input_dict["hasPositiveElectrode"]["hasQuantitativeProperty"][3]["hasReferenceUnit"]]]},
+            "electrode_thickness": {
+                "value": input_dict["hasPositiveElectrode"]["hasQuantitativeProperty"][4]["hasQuantityValue"]["hasNumericalData"], 
+                "unit": unit_abbreviations[uri_label_dict[input_dict["hasPositiveElectrode"]["hasQuantitativeProperty"][4]["hasReferenceUnit"]]]}}
+    
+    # Negative Electrode Default Values
+    ne_am_default_values = {
+        "active_material": {"value": "NMC"}, 
+        "specific_capacity": {
+            "value": input_dict["hasNegativeElectrode"]["hasConstituent"][1]["hasConstituent"][0]["hasQuantitativeProperty"][2]["hasQuantityValue"]["hasNumericalData"], 
+            "unit": unit_abbreviations[uri_label_dict[input_dict["hasNegativeElectrode"]["hasConstituent"][1]["hasConstituent"][0]["hasQuantitativeProperty"][2]["hasReferenceUnit"]]]}, 
+        "am_density": {
+            "value": input_dict["hasNegativeElectrode"]["hasConstituent"][1]["hasConstituent"][0]["hasQuantitativeProperty"][1]["hasQuantityValue"]["hasNumericalData"], 
+            "unit": unit_abbreviations[uri_label_dict[input_dict["hasNegativeElectrode"]["hasConstituent"][1]["hasConstituent"][0]["hasQuantitativeProperty"][1]["hasReferenceUnit"]]]}}
+    
+    ne_binder_default_values = {
+        "binder": {"value": "PVDF"}, 
+        "binder_density": {
+            "value": input_dict["hasNegativeElectrode"]["hasConstituent"][1]["hasConstituent"][1]["hasQuantitativeProperty"][1]["hasQuantityValue"]["hasNumericalData"], 
+            "unit": unit_abbreviations[uri_label_dict[input_dict["hasNegativeElectrode"]["hasConstituent"][1]["hasConstituent"][1]["hasQuantitativeProperty"][1]["hasReferenceUnit"]]]}}
+    
+    ne_additive_default_values = {
+        "additive": {"value": "Carbon Black"}, 
+        "additive_density": {
+            "value": input_dict["hasNegativeElectrode"]["hasConstituent"][1]["hasConstituent"][2]["hasQuantitativeProperty"][1]["hasQuantityValue"]["hasNumericalData"], 
+            "unit": unit_abbreviations[uri_label_dict[input_dict["hasNegativeElectrode"]["hasConstituent"][1]["hasConstituent"][2]["hasQuantitativeProperty"][1]["hasReferenceUnit"]]]}}
+    
+    ne_coating_default_values = {
+        "am_mass_fraction": {"value": input_dict["hasNegativeElectrode"]["hasConstituent"][1]["hasConstituent"][0]["hasQuantitativeProperty"][0]["hasQuantityValue"]["hasNumericalData"]}, 
+        "binder_mass_fraction": {"value": input_dict["hasNegativeElectrode"]["hasConstituent"][1]["hasConstituent"][1]["hasQuantitativeProperty"][0]["hasQuantityValue"]["hasNumericalData"]}, 
+        "additive_mass_fraction": {"value": input_dict["hasNegativeElectrode"]["hasConstituent"][1]["hasConstituent"][2]["hasQuantitativeProperty"][0]["hasQuantityValue"]["hasNumericalData"]}, 
+        "coating_thickness": {
+            "value": input_dict["hasNegativeElectrode"]["hasConstituent"][1]["hasQuantitativeProperty"][0]["hasQuantityValue"]["hasNumericalData"], 
+            "unit": unit_abbreviations[uri_label_dict[input_dict["hasNegativeElectrode"]["hasConstituent"][1]["hasQuantitativeProperty"][0]["hasReferenceUnit"]]]}, 
+        "mass_loading": {
+            "value": input_dict["hasNegativeElectrode"]["hasQuantitativeProperty"][1]["hasQuantityValue"]["hasNumericalData"], 
+            "unit": unit_abbreviations[uri_label_dict[input_dict["hasNegativeElectrode"]["hasQuantitativeProperty"][1]["hasReferenceUnit"]]]}}
+    
+    ne_current_collector_default_values = {
+        "current_collector_thickness": {
+            "value": input_dict["hasNegativeElectrode"]["hasConstituent"][0]["hasQuantitativeProperty"][0]["hasQuantityValue"]["hasNumericalData"], 
+            "unit": unit_abbreviations[uri_label_dict[input_dict["hasNegativeElectrode"]["hasConstituent"][0]["hasQuantitativeProperty"][0]["hasReferenceUnit"]]]}}
+    
+    if cell_format["format"] == "Coin":
+        ne_dimensions_default_values = {
+        "electrode_layers": {"value":input_dict["hasNegativeElectrode"]["hasQuantitativeProperty"][0]["hasQuantityValue"]["hasNumericalData"]},
+        "electrode_diameter": {
+            "value": input_dict["hasNegativeElectrode"]["hasQuantitativeProperty"][2]["hasQuantityValue"]["hasNumericalData"] , 
+            "unit": unit_abbreviations[uri_label_dict[input_dict["hasNegativeElectrode"]["hasQuantitativeProperty"][2]["hasReferenceUnit"]]]},
+        "electrode_thickness": {
+            "value": input_dict["hasNegativeElectrode"]["hasQuantitativeProperty"][3]["hasQuantityValue"]["hasNumericalData"], 
+            "unit": unit_abbreviations[uri_label_dict[input_dict["hasNegativeElectrode"]["hasQuantitativeProperty"][3]["hasReferenceUnit"]]]}}
+    else:
+        ne_dimensions_default_values = {
+            "electrode_layers": {"value":input_dict["hasNegativeElectrode"]["hasQuantitativeProperty"][0]["hasQuantityValue"]["hasNumericalData"]},
+            "electrode_width": {
+                "value": input_dict["hasNegativeElectrode"]["hasQuantitativeProperty"][2]["hasQuantityValue"]["hasNumericalData"], 
+                "unit": unit_abbreviations[uri_label_dict[input_dict["hasNegativeElectrode"]["hasQuantitativeProperty"][2]["hasReferenceUnit"]]]},
+            "electrode_height": {
+                "value": input_dict["hasNegativeElectrode"]["hasQuantitativeProperty"][3]["hasQuantityValue"]["hasNumericalData"], 
+                "unit": unit_abbreviations[uri_label_dict[input_dict["hasNegativeElectrode"]["hasQuantitativeProperty"][3]["hasReferenceUnit"]]]},
+            "electrode_thickness": {
+                "value": input_dict["hasNegativeElectrode"]["hasQuantitativeProperty"][4]["hasQuantityValue"]["hasNumericalData"], 
+                "unit": unit_abbreviations[uri_label_dict[input_dict["hasNegativeElectrode"]["hasQuantitativeProperty"][4]["hasReferenceUnit"]]]}}
+    
+    # Separator Default Values 
+    if cell_format["format"] == "Coin":
+        sep_default_values = {
+        "separator_mass": {
+            "value": input_dict["hasSeparator"]["hasQuantitativeProperty"][0]["hasQuantityValue"]["hasNumericalData"], 
+            "unit": unit_abbreviations[uri_label_dict[input_dict["hasSeparator"]["hasQuantitativeProperty"][0]["hasReferenceUnit"]]]},
+        "separator_porosity": {
+            "value": input_dict["hasSeparator"]["hasQuantitativeProperty"][3]["hasQuantityValue"]["hasNumericalData"]},
+        "separator_diameter": {
+            "value": input_dict["hasSeparator"]["hasQuantitativeProperty"][1]["hasQuantityValue"]["hasNumericalData"], 
+            "unit": unit_abbreviations[uri_label_dict[input_dict["hasSeparator"]["hasQuantitativeProperty"][1]["hasReferenceUnit"]]]},
+        "separator_thickness": {
+            "value": input_dict["hasSeparator"]["hasQuantitativeProperty"][2]["hasQuantityValue"]["hasNumericalData"] , 
+            "unit": unit_abbreviations[uri_label_dict[input_dict["hasSeparator"]["hasQuantitativeProperty"][2]["hasReferenceUnit"]]]}}
+    else:
+        sep_default_values = {
+            "separator_mass": {
+                "value": input_dict["hasSeparator"]["hasQuantitativeProperty"][0]["hasQuantityValue"]["hasNumericalData"], 
+                "unit": unit_abbreviations[uri_label_dict[input_dict["hasSeparator"]["hasQuantitativeProperty"][0]["hasReferenceUnit"]]]},
+            "separator_porosity": {
+                "value": input_dict["hasSeparator"]["hasQuantitativeProperty"][4]["hasQuantityValue"]["hasNumericalData"]},
+            "separator_width": {
+                "value": input_dict["hasSeparator"]["hasQuantitativeProperty"][1]["hasQuantityValue"]["hasNumericalData"], 
+                "unit": unit_abbreviations[uri_label_dict[input_dict["hasSeparator"]["hasQuantitativeProperty"][1]["hasReferenceUnit"]]]},
+            "separator_height": {
+                "value": input_dict["hasSeparator"]["hasQuantitativeProperty"][2]["hasQuantityValue"]["hasNumericalData"], 
+                "unit": unit_abbreviations[uri_label_dict[input_dict["hasSeparator"]["hasQuantitativeProperty"][2]["hasReferenceUnit"]]]},
+            "separator_thickness": {
+                "value": input_dict["hasSeparator"]["hasQuantitativeProperty"][3]["hasQuantityValue"]["hasNumericalData"], 
+                "unit": unit_abbreviations[uri_label_dict[input_dict["hasSeparator"]["hasQuantitativeProperty"][3]["hasReferenceUnit"]]]}}
 
-    return (cell_production_default_values, cell_properties_default_values, 
-            pe_am_default_values, pe_binder_default_values, pe_additive_default_values, pe_coating_default_values)
+    return (cell_format, cell_production_default_values, cell_properties_default_values, 
+            pe_am_default_values, pe_binder_default_values, pe_additive_default_values, pe_coating_default_values, pe_current_collector_default_values, pe_dimensions_default_values,
+            ne_am_default_values, ne_binder_default_values, ne_additive_default_values, ne_coating_default_values, ne_current_collector_default_values, ne_dimensions_default_values,
+            sep_default_values)
 
 
 def rectangular_cell_properties(default_values):
@@ -215,19 +411,19 @@ def rectangular_cell_properties(default_values):
         }}
     return output_dict
 
-def round_cell_properties():
-    global cell_mass
+def round_cell_properties(default_values):
+    st.write(default_values)
     length_units = ('mm', 'micron')
     mass_units = ('g', 'kg')
     col1, col2 = st.columns(2)
     with col1:
-        cell_mass       = st.number_input(label='Cell Mass', step = 0.1, min_value=0.0, value = cell_mass)
-        cell_diameter   = st.number_input(label='Cell Width', step = 0.1, min_value=0.0)
-        cell_height     = st.number_input(label='Cell Height', step = 0.1, min_value=0.0)
+        cell_mass       = st.number_input(label='Cell Mass', step = 0.1, min_value=0.0, value=float(default_values["mass"]["value"]))
+        cell_diameter   = st.number_input(label='Cell Width', step = 0.1, min_value=0.0, value=float(default_values["diameter"]["value"]))
+        cell_height     = st.number_input(label='Cell Height', step = 0.1, min_value=0.0, value=float(default_values["height"]["value"]))
     with col2:
-        cell_mass_unit      = st.selectbox('',mass_units, key="selectbox_cell_mass_unit")
-        cell_diameter_unit  = st.selectbox('',length_units, key="selectbox_cell_width_unit")
-        cell_height_unit    = st.selectbox('',length_units, key="selectbox_cell_height_unit")
+        cell_mass_unit      = st.selectbox('',mass_units, key="selectbox_cell_mass_unit", index=mass_units.index(default_values["mass"]["unit"]))
+        cell_diameter_unit  = st.selectbox('',length_units, key="selectbox_cell_width_unit", index=length_units.index(default_values["diameter"]["unit"]))
+        cell_height_unit    = st.selectbox('',length_units, key="selectbox_cell_height_unit", index=length_units.index(default_values["height"]["unit"]))
     
     output_dict = {"mass": {
             "value": cell_mass,
@@ -244,12 +440,13 @@ def round_cell_properties():
     return output_dict
 
 
-def set_cell_formats():
+def set_cell_formats(default_values):
+    formats = ['Coin', 'Cylindrical', 'Pouch', 'Prismatic']
     col1, col2 = st.columns(2)
     with col1:
         format_option = st.selectbox(
         'Battery Cell Format',
-        ('Coin', 'Cylindrical', 'Pouch', 'Prismatic'))
+        formats, index=formats.index(default_values["format"]))
 
     with col2:
         if format_option == 'Coin':
@@ -262,17 +459,6 @@ def set_cell_formats():
             type_option = 'Other'
     return{"cell_format": {"value": format_option}, 
         "cell_type": {"value": type_option}}
-
-def load_from_file():
-    global cell_mass
-    agree = st.checkbox('Load from file')
-    if agree:
-        cell_mass = 123
-        uploaded_files = st.file_uploader("Upload a JSON-LD metadata profile", accept_multiple_files=True)
-        for uploaded_file in uploaded_files:
-            bytes_data = uploaded_file.read()
-            st.write("filename:", uploaded_file.name)
-            st.write(bytes_data)
 
 def cell_production_metadata(default_values):
     name = st.text_input(label='Cell Name', value=default_values["name"])
@@ -386,35 +572,36 @@ def set_coating_properties(elde, coating_default_values):
                "value": mass_loading, 
                "unit": label_uri_dict[unit_prefLabel[mass_loading_unit]]}}
 
-def set_current_collector_properties(elde):
+def set_current_collector_properties(elde, current_collector_default_values):
     length_units = ['micron', 'mm']
     col1, col2 = st.columns(2)
     with col1:
         #pe_mass = st.number_input(label='Positive Electrode Mass', step = 0.1, min_value=0.0)
-        current_collector_thickness = st.number_input(label='Current Collector Thickness', step = 0.1, min_value=0.0, key = elde+"_current_collector_thickness")
+        current_collector_thickness = st.number_input(label='Current Collector Thickness', step = 0.1, min_value=0.0, key = elde+"_current_collector_thickness", value = float(current_collector_default_values["current_collector_thickness"]["value"]))
     with col2:
         #pe_mass_unit = st.selectbox('',('kg', 'g'), key="selectbox_pe_mass_unit")
-        current_collector_thickness_unit = st.selectbox('',length_units, key=elde+"_selectbox_cc_thickness_unit")
+        current_collector_thickness_unit = st.selectbox('',length_units, key=elde+"_selectbox_cc_thickness_unit", index=length_units.index(current_collector_default_values["current_collector_thickness"]["unit"]))
     return{"current_collector_thickness": {
                 "value": current_collector_thickness, 
                 "unit": label_uri_dict[unit_prefLabel[current_collector_thickness_unit]]}}
 
-def set_rectangular_electrode_properties(elde):
+def set_rectangular_electrode_properties(elde, dimensions_default_values):
     length_units = ['mm', 'cm']
-    layers = st.number_input(label='Electrode Layers Per Cell', step = 1, min_value=0, key=elde+"_layers")
+    thickness_units = ['micron', 'mm']
+    layers = st.number_input(label='Electrode Layers Per Cell', step = 1, min_value=0, key=elde+"_layers", value = (dimensions_default_values["electrode_layers"]["value"]))
     col1, col2 = st.columns(2)
     with col1:
         #pe_mass = st.number_input(label='Electrode Mass', step = 0.1, min_value=0.0)
         #pe_volume = st.number_input(label='Electrode Volume', step = 0.1, min_value=0.0)
-        electrode_width = st.number_input(label='Electrode Width', step = 0.1, min_value=0.0, key = elde + "_width")
-        electrode_height = st.number_input(label='Electrode Height', step = 0.1, min_value=0.0, key = elde + "_height")
-        electrode_thickness = st.number_input(label='Electrode Thickness', step = 0.1, min_value=0.0, key = elde + "_thickness")
+        electrode_width = st.number_input(label='Electrode Width', step = 0.1, min_value=0.0, key = elde + "_width", value = float(dimensions_default_values["electrode_width"]["value"]))
+        electrode_height = st.number_input(label='Electrode Height', step = 0.1, min_value=0.0, key = elde + "_height", value = float(dimensions_default_values["electrode_height"]["value"]))
+        electrode_thickness = st.number_input(label='Electrode Thickness', step = 0.1, min_value=0.0, key = elde + "_thickness", value = float(dimensions_default_values["electrode_thickness"]["value"]))
     with col2:
         #pe_mass_unit = st.selectbox('',('kg', 'g'), key="selectbox_pe_mass_unit")
         #pe_volume_unit = st.selectbox('',('L', 'mL'), key="selectbox_pe_volume_unit")
-        electrode_width_unit = st.selectbox('',length_units, key=elde+"_selectbox_width_unit")
-        electrode_height_unit = st.selectbox('',length_units, key=elde+"_selectbox_height_unit")
-        electrode_thickness_unit = st.selectbox('',('micron', 'mm'), key=elde+"_selectbox_pe_thickness_unit")
+        electrode_width_unit = st.selectbox('',length_units, key=elde+"_selectbox_width_unit", index=length_units.index(dimensions_default_values["electrode_width"]["unit"]))
+        electrode_height_unit = st.selectbox('',length_units, key=elde+"_selectbox_height_unit", index=length_units.index(dimensions_default_values["electrode_height"]["unit"]))
+        electrode_thickness_unit = st.selectbox('',thickness_units, key=elde+"_selectbox_pe_thickness_unit", index=thickness_units.index(dimensions_default_values["electrode_thickness"]["unit"]))
     return{"electrode_layers": {"value":layers},
            "electrode_width": {
                "value": electrode_width, 
@@ -426,20 +613,21 @@ def set_rectangular_electrode_properties(elde):
                "value": electrode_thickness, 
                "unit": label_uri_dict[unit_prefLabel[electrode_thickness_unit]]}}
 
-def set_circular_electrode_properties(elde):
+def set_circular_electrode_properties(elde, dimensions_default_values):
     length_units = ['mm', 'cm']
+    thickness_units = ['micron', 'mm']
     layers = st.number_input(label='Electrode Layers Per Cell', step = 1, min_value=0, key=elde+"_layers")
     col1, col2 = st.columns(2)
     with col1:
         #pe_mass = st.number_input(label='Electrode Mass', step = 0.1, min_value=0.0)
         #pe_volume = st.number_input(label='Electrode Volume', step = 0.1, min_value=0.0)
-        electrode_diameter = st.number_input(label='Electrode Diameter', step = 0.1, min_value=0.0, key = elde+"_diameter")
-        electrode_thickness = st.number_input(label='Electrode Thickness', step = 0.1, min_value=0.0, key = elde + "_thickness")
+        electrode_diameter = st.number_input(label='Electrode Diameter', step = 0.1, min_value=0.0, key = elde+"_diameter", value = float(dimensions_default_values["electrode_diameter"]["value"]))
+        electrode_thickness = st.number_input(label='Electrode Thickness', step = 0.1, min_value=0.0, key = elde + "_thickness", value = float(dimensions_default_values["electrode_thickness"]["value"]))
     with col2:
         #pe_mass_unit = st.selectbox('',('kg', 'g'), key="selectbox_pe_mass_unit")
         #pe_volume_unit = st.selectbox('',('L', 'mL'), key="selectbox_pe_volume_unit")
-        electrode_diameter_unit = st.selectbox('',length_units, key=elde+"_selectbox_diameter_unit")
-        electrode_thickness_unit = st.selectbox('',('micron', 'mm'), key=elde+"_selectbox_thickness_unit")
+        electrode_diameter_unit = st.selectbox('',length_units, key=elde+"_selectbox_diameter_unit", index=length_units.index(dimensions_default_values["electrode_diameter"]["unit"]))
+        electrode_thickness_unit = st.selectbox('',thickness_units, key=elde+"_selectbox_thickness_unit", index=thickness_units.index(dimensions_default_values["electrode_thickness"]["unit"]))
     return{"electrode_layers": {"value":layers},
            "electrode_diameter": {
                "value": electrode_diameter, 
@@ -448,22 +636,23 @@ def set_circular_electrode_properties(elde):
                "value": electrode_thickness, 
                "unit": label_uri_dict[unit_prefLabel[electrode_thickness_unit]]}}
 
-def set_rectangular_separator_properties():
+def set_rectangular_separator_properties(sep_default_values):
     mass_units = ['g', 'kg']
     length_units = ['mm', 'cm']
+    thickness_units = ['micron', 'mm']
     col1, col2 = st.columns(2)
     with col1:
-        separator_mass = st.number_input(label='Mass', step = 0.1, min_value=0.0)
-        separator_porosity = st.number_input(label='Porosity', step = 0.1, min_value=0.0)
-        separator_width = st.number_input(label='Width', step = 0.1, min_value=0.0, key = "sep_width")
-        separator_height = st.number_input(label='Height', step = 0.1, min_value=0.0, key = "sep_height")
-        separator_thickness = st.number_input(label='Thickness', step = 0.1, min_value=0.0, key = "sep_thickness")
+        separator_mass = st.number_input(label='Mass', step = 0.1, min_value=0.0, value = float(sep_default_values["separator_mass"]["value"]))
+        separator_porosity = st.number_input(label='Porosity', step = 0.1, min_value=0.0, value = float(sep_default_values["separator_porosity"]["value"]))
+        separator_width = st.number_input(label='Width', step = 0.1, min_value=0.0, key = "sep_width", value = float(sep_default_values["separator_width"]["value"]))
+        separator_height = st.number_input(label='Height', step = 0.1, min_value=0.0, key = "sep_height", value = float(sep_default_values["separator_height"]["value"]))
+        separator_thickness = st.number_input(label='Thickness', step = 0.1, min_value=0.0, key = "sep_thickness", value = float(sep_default_values["separator_thickness"]["value"]))
     with col2:
-        separator_mass_unit = st.selectbox('',mass_units, key="selectbox_pe_mass_unit")
+        separator_mass_unit = st.selectbox('',mass_units, key="selectbox_pe_mass_unit", index=mass_units.index(sep_default_values["separator_mass"]["unit"]))
         separator_porosity_unit = st.selectbox('',('-'), key="selectbox_pe_volume_unit")
-        separator_width_unit = st.selectbox('',length_units, key="sep_selectbox_width_unit")
-        separator_height_unit = st.selectbox('',length_units, key="sep_selectbox_height_unit")
-        separator_thickness_unit = st.selectbox('',('micron', 'mm'), key="sep_selectbox_pe_thickness_unit")
+        separator_width_unit = st.selectbox('',length_units, key="sep_selectbox_width_unit", index=length_units.index(sep_default_values["separator_width"]["unit"]))
+        separator_height_unit = st.selectbox('',length_units, key="sep_selectbox_height_unit", index=length_units.index(sep_default_values["separator_height"]["unit"]))
+        separator_thickness_unit = st.selectbox('',thickness_units, key="sep_selectbox_pe_thickness_unit", index=thickness_units.index(sep_default_values["separator_thickness"]["unit"]))
     return{"separator_mass": {
                 "value": separator_mass, 
                 "unit": label_uri_dict[unit_prefLabel[separator_mass_unit]]},
@@ -479,20 +668,21 @@ def set_rectangular_separator_properties():
                "value": separator_thickness, 
                "unit": label_uri_dict[unit_prefLabel[separator_thickness_unit]]}}
 
-def set_circular_separator_properties():
+def set_circular_separator_properties(sep_default_values):
     mass_units = ['g', 'kg']
     length_units = ['mm', 'cm']
+    thickness_units = ['micron', 'mm']
     col1, col2 = st.columns(2)
     with col1:
-        separator_mass = st.number_input(label='Mass', step = 0.1, min_value=0.0)
-        separator_porosity = st.number_input(label='Porosity', step = 0.1, min_value=0.0)
-        separator_diameter = st.number_input(label='Width', step = 0.1, min_value=0.0, key = "sep_diameter")
-        separator_thickness = st.number_input(label='Thickness', step = 0.1, min_value=0.0, key = "sep_thickness")
+        separator_mass = st.number_input(label='Mass', step = 0.1, min_value=0.0, value = float(sep_default_values["separator_mass"]["value"]))
+        separator_porosity = st.number_input(label='Porosity', step = 0.1, min_value=0.0, value = float(sep_default_values["separator_mass"]["value"]))
+        separator_diameter = st.number_input(label='Width', step = 0.1, min_value=0.0, key = "sep_diameter", value = float(sep_default_values["separator_diameter"]["value"]))
+        separator_thickness = st.number_input(label='Thickness', step = 0.1, min_value=0.0, key = "sep_thickness", value = float(sep_default_values["separator_thickness"]["value"]))
     with col2:
-        separator_mass_unit = st.selectbox('',mass_units, key="selectbox_pe_mass_unit")
+        separator_mass_unit = st.selectbox('',mass_units, key="selectbox_pe_mass_unit", index=mass_units.index(sep_default_values["separator_mass"]["unit"]))
         separator_porosity_unit = st.selectbox('',('-'), key="selectbox_pe_volume_unit")
-        separator_diameter_unit = st.selectbox('',length_units, key="sep_selectbox_width_unit")
-        separator_thickness_unit = st.selectbox('',('micron', 'mm'), key="sep_selectbox_pe_thickness_unit")
+        separator_diameter_unit = st.selectbox('',length_units, key="sep_selectbox_width_unit", index=length_units.index(sep_default_values["separator_diameter"]["unit"]))
+        separator_thickness_unit = st.selectbox('',thickness_units, key="sep_selectbox_pe_thickness_unit", index=thickness_units.index(sep_default_values["separator_thickness"]["unit"]))
     return{"separator_mass": {
                 "value": separator_mass, 
                 "unit": label_uri_dict[unit_prefLabel[separator_mass_unit]]},
@@ -666,7 +856,7 @@ def electrolyte():
                "unit": label_uri_dict[unit_prefLabel[component_amount_concentration_unit_5]]},}
 
 
-def rectangular_electrode(elde, am_default_values, binder_default_values, additive_default_values, coating_default_values):
+def rectangular_electrode(elde, am_default_values, binder_default_values, additive_default_values, coating_default_values, current_collector_default_values, dimensions_default_values):
     tab_labels = ["Active Material", "Binder", "Additive", "Coating", "Current Collector", "Dimensions"]
     tabs = st.tabs(tab_labels)
     with tabs[0]:
@@ -678,27 +868,27 @@ def rectangular_electrode(elde, am_default_values, binder_default_values, additi
     with tabs[3]:
         coating_properties   = set_coating_properties(elde, coating_default_values)
     with tabs[4]:
-        cc_properties        = set_current_collector_properties(elde)
+        cc_properties        = set_current_collector_properties(elde, current_collector_default_values)
     with tabs[5]:
-        dim_properties       = set_rectangular_electrode_properties(elde)
+        dim_properties       = set_rectangular_electrode_properties(elde, dimensions_default_values)
 
     electrode_properties = {**am_properties, **binder_properties, **additive_properties, **coating_properties, **cc_properties, **dim_properties}
     return electrode_properties
 
-def circular_electrode(elde):
+def circular_electrode(elde, am_default_values, binder_default_values, additive_default_values, coating_default_values, current_collector_default_values, dimensions_default_values):
     tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["Active Material", "Binder", "Additive", "Coating", "Current Collector", "Dimensions"])
     with tab1:
-        am_properties        = set_active_material(elde)
+        am_properties        = set_active_material(elde, am_default_values)
     with tab2:
-        binder_properties    = set_binder_material(elde)
+        binder_properties    = set_binder_material(elde, binder_default_values)
     with tab3:
-        additive_properties  = set_additive_material(elde)
+        additive_properties  = set_additive_material(elde, additive_default_values)
     with tab4:
-        coating_properties   = set_coating_properties(elde)
+        coating_properties   = set_coating_properties(elde, coating_default_values)
     with tab5:
-        cc_properties        = set_current_collector_properties(elde)
+        cc_properties        = set_current_collector_properties(elde, current_collector_default_values)
     with tab6:
-        dim_properties       = set_circular_electrode_properties(elde)
+        dim_properties       = set_circular_electrode_properties(elde, dimensions_default_values)
         
     electrode_properties = {**am_properties, **binder_properties, **additive_properties, **coating_properties, **cc_properties, **dim_properties}
     return electrode_properties
@@ -717,6 +907,15 @@ def disperse_fields_to_json(format_data, production_properties, physical_propert
     jsonld_data["schema:productionDate"]    = production_properties["productionDate"]
     jsonld_data["schema:manufacturer"]      = production_properties["manufacturer"]
     jsonld_data["schema:creator"]           = production_properties["creator"]
+    if format_data["cell_format"]["value"] == "Coin":
+        jsonld_data["@type"] = "CoinCell"
+    elif format_data["cell_format"]["value"] == "Pouch":
+        jsonld_data["@type"] = "PouchCell"
+    elif format_data["cell_format"]["value"] == "Prismatic":
+        jsonld_data["@type"] = "PrismaticCell"
+    elif format_data["cell_format"]["value"] == "Cylindrical":
+        jsonld_data["@type"] = "CylindricalCell"
+    
 
     if format_data["cell_format"]["value"] == "Coin" or format_data["cell_format"]["value"] == "Cylindrical":
         ## Cell Quantitative Property ID
@@ -1162,8 +1361,189 @@ def disperse_fields_to_json(format_data, production_properties, physical_propert
     return jsonld_data
 
 
+def custom_cell_annotator():
+    loaded_dict = load_from_file()
+    if not bool(loaded_dict):
+        input_dict = default_dict
+        default_format = default_dict["@type"].replace("Cell", "")
+        if default_format != "Battery":
+            init_cell_format = {"format": default_format}
+        else:
+            init_cell_format = {"format": "Pouch"}
+    else:
+        input_dict = loaded_dict
+        loaded_format = loaded_dict["@type"].replace("Cell", "")
+        if loaded_format != "Battery":
+            init_cell_format = {"format": loaded_format}
+        else:
+            init_cell_format = {"format": "Pouch"}
+
+    format_data = set_cell_formats(init_cell_format)
+    input_dict["@type"] = str(format_data["cell_format"]["value"]) + "Cell"
+    #st.write(input_dict["@type"])
+
+    (cell_format, cell_production_default_values, cell_properties_default_values, 
+    pe_am_default_values, pe_binder_default_values, pe_additive_default_values, pe_coating_default_values, pe_current_collector_default_values, pe_dimensions_default_values,
+    ne_am_default_values, ne_binder_default_values, ne_additive_default_values, ne_coating_default_values, ne_current_collector_default_values, ne_dimensions_default_values,
+    sep_default_values) = load_default_values(input_dict)
+
+
+    with st.form(key='my_form'):
+        with st.expander("Production Details"):
+            production_properties = cell_production_metadata(cell_production_default_values)
+
+        with st.expander("Cell Properties"):
+            tab1, tab2 = st.tabs(["Physical Dimensions", "Electrical Properties"])
+            with tab1:
+                if format_data["cell_format"]["value"] == "Coin" or format_data["cell_format"]["value"] == "Cylindrical":
+                    physical_properties = round_cell_properties(cell_properties_default_values)
+                else:
+                    physical_properties = rectangular_cell_properties(cell_properties_default_values)
+                
+            with tab2:
+                electrical_properties = cell_nominal_electrical_properties()
+            
+        with st.expander("Positive Electrode Properties"):
+            if format_data["cell_format"]["value"] != "Coin":
+                pe_properties = rectangular_electrode("pe", pe_am_default_values, pe_binder_default_values, pe_additive_default_values, pe_coating_default_values, pe_current_collector_default_values, pe_dimensions_default_values)
+            else:
+                pe_properties = circular_electrode("pe", pe_am_default_values, pe_binder_default_values, pe_additive_default_values, pe_coating_default_values, pe_current_collector_default_values, pe_dimensions_default_values)
+
+        with st.expander("Negative Electrode Properties"):
+            if format_data["cell_format"]["value"] != "Coin":
+                ne_properties = rectangular_electrode("ne", ne_am_default_values, ne_binder_default_values, ne_additive_default_values, ne_coating_default_values, ne_current_collector_default_values, ne_dimensions_default_values)
+            else:
+                ne_properties = circular_electrode("ne", ne_am_default_values, ne_binder_default_values, ne_additive_default_values, ne_coating_default_values, ne_current_collector_default_values, ne_dimensions_default_values)
+        
+        with st.expander("Separator Properties"):
+            if format_data["cell_format"]["value"] == "Coin":
+                separator_properties = set_circular_separator_properties(sep_default_values)
+            else:
+                separator_properties = set_rectangular_separator_properties(sep_default_values)
+
+        with st.expander("Electroylte Properties"):
+            electrolyte_properties = electrolyte()
+            
+        submit_button = st.form_submit_button(label='Submit')
+
+    if submit_button:
+        # Do something with the form data
+        jsonld_data = disperse_fields_to_json(format_data, 
+                                            production_properties, 
+                                            physical_properties, 
+                                            electrical_properties,
+                                            pe_properties,
+                                            ne_properties,
+                                            separator_properties,
+                                            electrolyte_properties)
+        
+        #st.write(jsonld_data)
+        # Define a filename for the downloaded file
+        filename = "scientific_metadata.json"
+        json_data = json.dumps(jsonld_data, indent=4)
+
+        # Write the JSON string to a file
+        with open(filename, "w") as f:
+            f.write(json_data)
+        # Send the file to the user for download
+        st.download_button(label="Download", data=json_data, file_name=filename, mime="application/ld+json")
+
+def cell_identification_metadata():
+    default_value = "e.g. http://www.example.com/8675309"
+    if st.checkbox('Retrieve from file'):
+        uploaded_file = st.file_uploader("Upload a JSON-LD metadata profile", accept_multiple_files=False)
+        if uploaded_file is not None:
+            content = uploaded_file.read()
+            json_dict = json.loads(content.decode('utf-8'))
+            default_value = json_dict["@id"]
+
+    cell_IRI = st.text_input(label='Persistent Identifier of the Battery Cell', value = default_value)
+
+
+    output_dict = {
+           "cell_IRI": cell_IRI}
+    return output_dict
+
+def data_production_metadata():
+    production_date = st.date_input("Production Date")
+    creator = st.text_input(label='Creator ORCID (Person)', value = "e.g. 0000-0002-8758-6109")
+    manufacturer = st.text_input(label='Manufacturer ROR ID (Organization)', value = "e.g. 01f677e56")
+    reference = st.text_input(label='DOI of Related Publication', value = "e.g. 10.1002/aenm.202102702")
+
+    if len(creator) != 0:
+        creator = orcid_namespace + creator
+    
+    if len(manufacturer) != 0:
+        manufacturer = rorid_namespace + manufacturer
+
+    output_dict = {
+           "productionDate": str(production_date),
+           "creator": creator, 
+           "manufacturer": manufacturer}
+    return output_dict
+
+#@st.cache_data
+def data_annotator():
+    
+    column_names = []
+
+    with st.expander("File Upload"):
+        file = st.file_uploader("Upload CSV", type=["csv"])
+        if file is not None:
+            # Use pandas to read the CSV data into a DataFrame
+            df = pd.read_csv(file)
+
+            # Display the DataFrame in the Streamlit app
+            if st.checkbox('Preview file contents'):
+                st.write(df)
+            
+            # Get the list of column names
+            column_names = df.columns.tolist()
+
+    with st.expander("Quantity Mapping"):
+        for name in column_names:
+            quantity_name, quantity_unit = [x.strip() for x in name.split("/")]
+            col1, col2, col3 = st.columns([1, 2, 2])
+            read_label = col1.text_input("Data label", value=name, disabled=True)
+            closest_matches = {match[0]: label_uri_dict[match[0]] for match in process.extract(quantity_name, priority_quantities, limit=3)}
+            closest_matches_sorted = dict(sorted(closest_matches.items(), key=lambda item: len(item[0])))
+            quantity = col2.selectbox(
+                "Quantity",
+                options=list(closest_matches),
+                key="quantity"+name,
+            )
+                
+            unit = col3.selectbox(
+                "Unit",
+                options=priority_quantities_units[quantity],
+                key="unit"+name,
+            )
+
+            Term = str(label_uri_dict[quantity])
+            query_str = f"""
+                PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                
+                SELECT ?o
+                WHERE {{
+                    <{Term}> <http://emmo.info/emmo#EMMO_967080e5_2f42_4eb2_a3a9_c58143e835f9> ?o .
+                }}
+            """
+            result = g.query(query_str)
+            
+            col1, col2 = st.columns([1,4])
+            
+            for row in result:
+                elucidation = row['o']
+                col2.write(elucidation)
+
+    with st.expander("Cell Persistent Identifier"):
+        cell_identification_metadata()
+
+    with st.expander("Bibliographic Information"):
+        data_production_metadata()
+
 st.title("Batt-O-Matic (beta)")
-st.write("A battery metadata generator for the Semantic Web")
+st.write("Generate FAIR battery metadata")
 # st.write("")
 # st.write("")
 
@@ -1180,80 +1560,27 @@ st.write("A battery metadata generator for the Semantic Web")
 #     st.markdown("# About")
 #     st.markdown("This is a Streamlit app for ...")
 
+if "data_button_clicked" not in st.session_state:
+        st.session_state.data_button_clicked = False
 
-# cols = st.columns(4)
-# with cols[1]:
-#     custom_cell_button= st.button("Custom Cell", use_container_width=True)
-#     time_series_button = st.button("Time Series Data", use_container_width=True)
-# with cols[2]:
-#     commercial_cell_button= st.button("Commercial Cell", use_container_width=True)
-#     cycle_series_button = st.button("Cycle Series Data", use_container_width=True)
+cols = st.columns(3)
+with cols[0]:
+    custom_cell_button= st.button("Custom Cell", use_container_width=True)
+with cols[1]:
+    commercial_cell_button= st.button("Commercial Cell", use_container_width=True)
+with cols[2]:
+    data_button = st.button("CSV Data", use_container_width=True)
 
+if data_button:
+    st.session_state.data_button_clicked = True
 # st.write("")
 # st.write("")
-load_from_file()
 
-format_data = set_cell_formats()
-(cell_production_default_values, cell_properties_default_values, 
- pe_am_default_values, pe_binder_default_values, pe_additive_default_values, pe_coating_default_values) = load_default_values()
+if custom_cell_button == True:
 
-with st.form(key='my_form'):
-    with st.expander("Production Details"):
-        production_properties = cell_production_metadata(cell_production_default_values)
+    custom_cell_annotator()
 
-    with st.expander("Cell Properties"):
-        tab1, tab2 = st.tabs(["Physical Dimensions", "Electrical Properties"])
-        with tab1:
-            if format_data["cell_format"]["value"] == "Coin" or format_data["cell_format"]["value"] == "Cylindrical":
-                physical_properties = round_cell_properties()
-            else:
-                physical_properties = rectangular_cell_properties(cell_properties_default_values)
-            
-        with tab2:
-            electrical_properties = cell_nominal_electrical_properties()
-        
-    with st.expander("Positive Electrode Properties"):
-        if format_data["cell_format"]["value"] != "Coin":
-            pe_properties = rectangular_electrode("pe", pe_am_default_values, pe_binder_default_values, pe_additive_default_values, pe_coating_default_values)
-        else:
-            pe_properties = circular_electrode("pe")
-
-    with st.expander("Negative Electrode Properties"):
-        if format_data["cell_format"]["value"] != "Coin":
-            ne_properties = rectangular_electrode("ne", pe_am_default_values, pe_binder_default_values, pe_additive_default_values, pe_coating_default_values)
-        else:
-            ne_properties = circular_electrode("ne")
+elif st.session_state.data_button_clicked:
     
-    with st.expander("Separator Properties"):
-        if format_data["cell_format"]["value"] == "Coin":
-            separator_properties = set_circular_separator_properties()
-        else:
-            separator_properties = set_rectangular_separator_properties()
-
-    with st.expander("Electroylte Properties"):
-        electrolyte_properties = electrolyte()
-        
+    data_annotator()
     
-    submit_button = st.form_submit_button(label='Submit')
-
-if submit_button:
-    # Do something with the form data
-    jsonld_data = disperse_fields_to_json(format_data, 
-                                          production_properties, 
-                                          physical_properties, 
-                                          electrical_properties,
-                                          pe_properties,
-                                          ne_properties,
-                                          separator_properties,
-                                          electrolyte_properties)
-    
-    st.write(jsonld_data)
-    # Define a filename for the downloaded file
-    filename = "scientific_metadata.json"
-    json_data = json.dumps(jsonld_data, indent=4)
-
-    # Write the JSON string to a file
-    with open(filename, "w") as f:
-        f.write(json_data)
-    # Send the file to the user for download
-    st.download_button(label="Download", data=json_data, file_name=filename, mime="application/ld+json")
