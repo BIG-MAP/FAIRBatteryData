@@ -11,10 +11,9 @@ import utils
 def initialize():
     rdf_full_graph, label_uri_dict, uri_label_dict = utils.load_resources()
 
-    option_library = {"name":utils.query_all_schemas(rdf_full_graph, uri_label_dict, schema_type = "name"),
-                    "productionDate":utils.query_all_schemas(rdf_full_graph, uri_label_dict, schema_type = "productionDate"),
-                    "manufacturer":utils.query_all_schemas(rdf_full_graph, uri_label_dict, schema_type = "manufacturer"),
-                    "creator":utils.query_all_schemas(rdf_full_graph, uri_label_dict, schema_type = "creator"),
+    option_library = {"cell name":utils.query_all_schemas(rdf_full_graph, uri_label_dict, schema_type = "name"),
+                    "manufacturer":utils.query_all_organizations(rdf_full_graph),
+                    "creator":utils.query_all_experts(rdf_full_graph),
                     "material":utils.query_all_materials(rdf_full_graph, uri_label_dict)}
 
     return option_library, rdf_full_graph, label_uri_dict, uri_label_dict
@@ -52,4 +51,21 @@ if search_requested:
                                      uri_label_dict, 
                                      material_label=search_criterion.value)
 
-        st.dataframe(results_df, 700, 700)
+        st.dataframe(results_df, 700, 300)
+
+    if search_criterion.criterion == "manufacturer":
+
+        ror_id = option_library[search_criterion.criterion][search_criterion.value]
+        results_df = utils.query_cell_by_organization(rdf_full_graph, 
+                                     ror=ror_id)
+
+        st.dataframe(results_df, 700, 300)
+        
+
+    if search_criterion.criterion == "creator":
+
+        orcid_id = option_library[search_criterion.criterion][search_criterion.value]
+        results_df = utils.query_cell_by_expert(rdf_full_graph, 
+                                     expert_orcid=orcid_id)
+
+        st.dataframe(results_df, 700, 300)

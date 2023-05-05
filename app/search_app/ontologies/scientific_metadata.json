@@ -106,8 +106,8 @@
     "@type": "BatteryCell",
     "schema:name": "NMC Graphice cell with CMC",
     "schema:productionDate": "2023-05-02",
-    "schema:manufacturer": "https://ror.org/01f677e56",
-    "schema:creator": "https://orcid.org/0000-0002-8758-6109",
+    "schema:manufacturer": {"@id": "https://ror.org/01f677e56"},
+    "schema:creator": {"@id":"https://orcid.org/0000-0002-8758-6109"},
     "hasQuantitativeProperty": [
         {
             "@type": "Mass",

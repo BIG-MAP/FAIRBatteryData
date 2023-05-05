@@ -129,3 +129,12 @@ WHERE {
               schema:manufacturer ?manufacturer.
 }
 """
+
+query_experts = PREFIXES  + """
+
+SELECT ?givenName ?familiName ?email
+WHERE {
+    ?instance rdf:type battery:battery_68ed592a_7924_45d0_a108_94d6275d57f0;
+              schema:manufacturer ?manufacturer.
+}
+"""

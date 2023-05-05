@@ -1,6 +1,8 @@
 
 from rdflib import Graph, SKOS, Literal, URIRef, RDF
+from rdflib.parser import Parser
 import warnings
+import pickle
 
 import pandas as pd
 
@@ -80,15 +82,51 @@ def load_ontologies():
 
 def load_resources():
 
-    json_ld_paths = ["../ontologies/scientific_metadata.json"]
+    jsons_paths = ["../ontologies/scientific_metadata.json",
+                    "../ontologies/experts.json",
+                    "../ontologies/organizations.json", 
+                    "../ontologies/SINTEFCell20230502-1-1.json", 
+                    "../ontologies/SINTEFCell20230502-2-1.json", 
+                    "../ontologies/SINTEFCell20230502-3-1.json", 
+                    "../ontologies/SINTEFCell20230502-4-1.json"]
 
     g, label_uri_dict, uri_label_dict = load_ontologies()
 
+    for path in jsons_paths:
+        g_json = Graph().parse(path, format='json-ld')
+        g = g + g_json
 
-    g.parse("../ontologies/scientific_metadata.json")
 
     return g, label_uri_dict, uri_label_dict
 
+
+def pickle_resources():
+
+    g, label_uri_dict, uri_label_dict = load_resources()
+
+    # Pickle the RDF graph object
+    with open("rdf_ontologies_kb.pickle", "wb") as f:
+        pickle.dump(g, f)
+
+    with open("label_uri_dict.pickle", "wb") as f:
+        pickle.dump(label_uri_dict, f)
+
+    with open("uri_label_dict.pickle", "wb") as f:
+        pickle.dump(uri_label_dict, f)
+
+
+def unpickle_resources():
+    # Unpickle the RDF graph object
+    with open("rdf_ontologies_kb.pickle", "rb") as f:
+        g_unpickled = pickle.load(f)
+
+    with open("label_uri_dict.pickle", "rb") as f:
+        label_uri_dict = pickle.load(f)
+
+    with open("uri_label_dict.pickle", "rb") as f:
+        uri_label_dict = pickle.load(f)
+
+    return g_unpickled, label_uri_dict, uri_label_dict
 
 
 #################################
@@ -122,7 +160,7 @@ PREFIX schema:<https://schema.org/>
 
 def query_all_schemas(rdf_graph:Graph, uri_label_dict:dict, schema_type:str)->list:
    
-   supported_schema_entities =  ["name", "productionDate", "manufacturer", "creator"]
+   supported_schema_entities =  ["name", "manufacturer", "creator"]
    
    if schema_type in supported_schema_entities:
 
@@ -152,7 +190,7 @@ def query_all_materials(rdf_graph:Graph, uri_label_dict:dict)->list:
 
     SELECT ?chemicalmaterial
     WHERE {
-        ?instance rdf:type battery:battery_68ed592a_7924_45d0_a108_94d6275d57f0;
+        ?instance rdf:type/rdfs:subClassOf* battery:battery_68ed592a_7924_45d0_a108_94d6275d57f0;
                 (echem:electrochemistry_8e9cf965_9f92_46e8_b678_b50410ce3616|echem:electrochemistry_5d299271_3f68_494f_ab96_3db9acdd3138) ?something.
 
         ?something (emmo:EMMO_dba27ca1_33c9_4443_a912_1519ce4c39ec)+ ?material.
@@ -210,4 +248,107 @@ def query_cell_by_material(rdf_graph:Graph, label_uri_dict:dict, uri_label_dict:
         results_dict["Date"].append(human_rep[3])
         results_dict["Material"].append(material_label)
     
+    return pd.DataFrame(results_dict)
+
+
+
+def query_all_experts(rdf_graph:Graph)->dict:
+
+    query = PREFIXES  + f"""
+        SELECT ?givenName ?familyName ?id
+
+        WHERE {{
+            ?id rdf:type schema:Researcher;
+                        schema:familyName ?familyName;
+                        schema:givenName ?givenName.
+        }}
+        """
+
+
+    qres = rdf_graph.query(query)
+
+    experts = {}
+    for result in qres:
+        name_str = str(result[0]) + " " + str(result[1])
+        iri = str(result[2])
+        experts[name_str] = iri
+
+    return experts
+
+
+
+def query_all_organizations(rdf_graph:Graph)->dict:
+
+    query = PREFIXES  + f"""
+    SELECT ?name ?id
+
+    WHERE {{
+        ?id rdf:type schema:ResearchOrganization;
+                schema:name ?name;
+    }}
+    """
+    qres = rdf_graph.query(query)
+
+
+    organizations = {}
+    for result in qres:
+        name_str = str(result[0])
+        iri = str(result[1])
+        organizations[name_str] = iri
+
+    return organizations
+
+
+def query_cell_by_expert(rdf_graph:Graph, expert_orcid:str):
+
+    query = PREFIXES  + f"""
+    SELECT ?instance ?givenName ?familyName ?email ?date
+    WHERE {{
+        ?instance rdf:type/rdfs:subClassOf* battery:battery_68ed592a_7924_45d0_a108_94d6275d57f0;
+                schema:creator <{expert_orcid}>;
+                schema:productionDate ?date.
+
+        <{expert_orcid}>  schema:familyName ?familyName;
+                          schema:givenName ?givenName;
+                         schema:email ?email.
+            }}
+    """
+
+    qres = rdf_graph.query(query)
+
+    results_dict = {"CellID":[], "Researcher":[], "Email":[], "Date":[]}
+
+    for hit in qres:
+        string_rep = [str(rdf_obj) for rdf_obj in hit]
+        results_dict["CellID"].append(string_rep[0])
+        results_dict["Researcher"].append(string_rep[1]+" " + string_rep[2])
+        results_dict["Email"].append(string_rep[3])
+        results_dict["Date"].append(string_rep[4])
+
+    return pd.DataFrame(results_dict)
+
+
+def query_cell_by_organization(rdf_graph:Graph, ror:str):
+
+    query = PREFIXES  + f"""
+        SELECT ?instance ?name ?date ?personID
+        WHERE {{
+            ?instance rdf:type/rdfs:subClassOf* battery:battery_68ed592a_7924_45d0_a108_94d6275d57f0;
+                schema:manufacturer <{ror}>;
+                schema:creator ?personID;
+                schema:productionDate ?date.
+            <{ror}>  schema:name ?name;
+
+            }}
+        """
+    qres = rdf_graph.query(query)
+    results_dict = {"CellID":[], "Organization":[], "Date":[], "ResearcherID":[]}
+
+    for hit in qres:
+        string_rep = [str(rdf_obj) for rdf_obj in hit]
+        results_dict["CellID"].append(string_rep[0])
+        results_dict["Organization"].append(string_rep[1])
+        results_dict["Date"].append(string_rep[2])
+        results_dict["ResearcherID"].append(string_rep[3])
+        
     return pd.DataFrame(results_dict)
