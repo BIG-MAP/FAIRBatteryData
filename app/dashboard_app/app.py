@@ -4,6 +4,7 @@ import json
 from rdflib import Graph, URIRef, Namespace, Literal
 from rdflib.namespace import RDF, RDFS, SKOS
 import requests
+import plotly.express as px
 
 @st.cache_data
 def load_ontology():
@@ -17,7 +18,8 @@ def load_ontology():
     materials                   = 'https://raw.githubusercontent.com/emmo-repo/domain-electrochemistry/master/material_bigmap_temp.ttl'
 
     kg_path_mod                 = 'https://raw.githubusercontent.com/BIG-MAP/FAIRBatteryData/json-ld/app/kg-battery-mod.ttl'
-    experts                     = 'https://raw.githubusercontent.com/BIG-MAP/FAIRBatteryData/json-ld/app/BatteryExperts.ttl'
+    experts                     = 'https://raw.githubusercontent.com/BIG-MAP/Batt-O-Matic/main/data/experts.json'
+    organizations               = 'https://raw.githubusercontent.com/BIG-MAP/Batt-O-Matic/main/data/organizations.json'
 
     g= Graph()
     g.parse(emmo, format='ttl')
@@ -29,7 +31,8 @@ def load_ontology():
     g.parse(battery, format='ttl')
     g.parse(materials, format='ttl')
     g.parse(kg_path_mod, format='ttl')
-    g.parse(experts, format='ttl')
+    g.parse(experts, format='json-ld')
+    g.parse(organizations, format='json-ld')
     
     # Create a dictionary to hold the mappings
     label_uri_dict = {}
@@ -153,24 +156,69 @@ def get_format(g, iri):
 
     return str(format[0])
 
+def get_cell_capacity(g, iri):
+    capacity = []
+    unit = []
+    query_text = f"""
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX schema: <https://schema.org/>
+    SELECT ?data ?unit
+    WHERE {{
+    <{iri}> <http://emmo.info/emmo#EMMO_0aa934ee_1ad4_4345_8a7f_bc73ec67c7e5> ?prop .
+    ?prop rdf:type <http://emmo.info/electrochemistry#electrochemistry_791c1915_a791_4450_acd8_7f94764743b5> .
+    ?prop <http://emmo.info/emmo#EMMO_8ef3cd6d_ae58_4a8d_9fc0_ad8f49015cd0> ?qv .
+    ?qv <http://emmo.info/emmo#EMMO_faf79f53_749d_40b2_807c_d34244c192f4> ?data .
+    ?prop <http://emmo.info/emmo#EMMO_67fc0a36_8dcb_4ffa_9a43_31074efa3296> ?unit .
+    }}
+    """
+    results = g.query(query_text)
+    for row in results:
+        capacity.append(row.data)
+        unit.append(row.unit)
+
+    return (capacity[0], unit[0])
+
 def get_positive_active_material(g, iri):
     pe_active_material = []
     query_text = f"""
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     PREFIX schema: <https://schema.org/>
-    SELECT ?o
+    SELECT ?type
     WHERE {{
     <{iri}> <http://emmo.info/electrochemistry#electrochemistry_8e9cf965_9f92_46e8_b678_b50410ce3616> ?pe .
     ?pe <http://emmo.info/emmo#EMMO_dba27ca1_33c9_4443_a912_1519ce4c39ec> ?coating .
-    ?coating <http://emmo.info/emmo#EMMO_dba27ca1_33c9_4443_a912_1519ce4c39ec> ?o .
-    ?o rdf:type* <http://emmo.info/emmo#EMMO_321ea507_e363_4676_80dc_7f7f566ce2e2> .
+    ?coating <http://emmo.info/emmo#EMMO_dba27ca1_33c9_4443_a912_1519ce4c39ec> ?con .
+    ?con rdf:type <http://emmo.info/electrochemistry#electrochemistry_79d1b273-58cd-4be6-a250-434817f7c261> .
+    ?con rdf:type ?type
     }}
     """
     results = g.query(query_text)
     for row in results:
-        pe_active_material.append(row.o)
+        if str(row.type) != "http://emmo.info/electrochemistry#electrochemistry_79d1b273-58cd-4be6-a250-434817f7c261":
+            pe_active_material.append(row.type)
 
     return str(pe_active_material[0])
+
+def get_negative_active_material(g, iri):
+    ne_active_material = []
+    query_text = f"""
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX schema: <https://schema.org/>
+    SELECT ?type
+    WHERE {{
+    <{iri}> <http://emmo.info/electrochemistry#electrochemistry_5d299271_3f68_494f_ab96_3db9acdd3138> ?ne .
+    ?ne <http://emmo.info/emmo#EMMO_dba27ca1_33c9_4443_a912_1519ce4c39ec> ?coating .
+    ?coating <http://emmo.info/emmo#EMMO_dba27ca1_33c9_4443_a912_1519ce4c39ec> ?con .
+    ?con rdf:type <http://emmo.info/electrochemistry#electrochemistry_79d1b273-58cd-4be6-a250-434817f7c261> .
+    ?con rdf:type ?type
+    }}
+    """
+    results = g.query(query_text)
+    for row in results:
+        if str(row.type) != "http://emmo.info/electrochemistry#electrochemistry_79d1b273-58cd-4be6-a250-434817f7c261":
+            ne_active_material.append(row.type)
+
+    return str(ne_active_material[0])
 
 def get_datasets(g, iri):
     datasets = []
@@ -181,7 +229,7 @@ def get_datasets(g, iri):
     PREFIX qb: <http://purl.org/linked-data/cube#>
     SELECT ?ds
     WHERE {{
-    ?ds dcterms:subject ?o .
+    ?ds dcterms:subject <{iri}> .
     }}
     """
     #?ds dcterms:subject <{iri}> .
@@ -220,48 +268,105 @@ def get_time_column(g, iri):
     PREFIX qb: <http://purl.org/linked-data/cube#>
     PREFIX dcat: <http://www.w3.org/ns/dcat#>
     PREFIX echem: <http://emmo.info/electrochemistry#>
-    SELECT ?o
+    SELECT ?order
     WHERE {{
     <{iri}> dcat:structure ?struct .
     ?struct dcat:component ?comp .
-    ?comp qb:dimension ?d .
-    ?comp qb:order ?o
+    ?comp qb:dimension echem:electrochemistry_27b3799c_250c_4332_8b71_7992c4a7bb05 .
+    ?comp qb:order ?order
     }}
     """
     #?ds dcterms:subject <{iri}> .
     results = g.query(query_text)
     for row in results:
-        order.append(row.o)
+        order.append(row.order.value)
 
-    return str(order)
+    return order[0]
+
+def get_voltage_column(g, iri):
+    order = []
+    query_text = f"""
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX schema: <https://schema.org/>
+    PREFIX dcterms: <http://purl.org/dc/terms/>
+    PREFIX qb: <http://purl.org/linked-data/cube#>
+    PREFIX dcat: <http://www.w3.org/ns/dcat#>
+    PREFIX echem: <http://emmo.info/electrochemistry#>
+    SELECT ?order
+    WHERE {{
+    <{iri}> dcat:structure ?struct .
+    ?struct dcat:component ?comp .
+    ?comp qb:dimension <http://emmo.info/electrochemistry#electrochemistry_4ebe2ef1_eea8_4b10_822d_7a68215bd24d> .
+    ?comp qb:order ?order
+    }}
+    """
+    #?ds dcterms:subject <{iri}> .
+    results = g.query(query_text)
+    for row in results:
+        order.append(row.order.value)
+
+    return order[0]
+
+def get_current_column(g, iri):
+    order = []
+    query_text = f"""
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX schema: <https://schema.org/>
+    PREFIX dcterms: <http://purl.org/dc/terms/>
+    PREFIX qb: <http://purl.org/linked-data/cube#>
+    PREFIX dcat: <http://www.w3.org/ns/dcat#>
+    PREFIX echem: <http://emmo.info/electrochemistry#>
+    SELECT ?order
+    WHERE {{
+    <{iri}> dcat:structure ?struct .
+    ?struct dcat:component ?comp .
+    ?comp qb:dimension <http://emmo.info/electrochemistry#electrochemistry_637ee9c4_4b3f_4d3a_975b_c0572dfe53ce> .
+    ?comp qb:order ?order
+    }}
+    """
+    #?ds dcterms:subject <{iri}> .
+    results = g.query(query_text)
+    for row in results:
+        order.append(row.order.value)
+
+    return order[0]
 
 def download_dataset(url):
     # Load the CSV data into a Pandas DataFrame
     df = pd.read_csv(url)
 
-    # Display the DataFrame in Streamlit
-    st.write(df)
     return df
 
 def plot_time_voltage(g, iri, df):
     # get the order of the time and voltage from the metadata
-    order = get_time_column(g, iri)
-    st.write(order)
+    time_order = get_time_column(g, iri) -1
+    voltage_order = get_voltage_column(g, iri) -1
+    current_order = get_current_column(g, iri) -1
+    # Create a line chart using Plotly
+    fig = fig = px.line(df, x=df.columns[time_order], y=df.columns[voltage_order])
+    
+    # Display the chart in Streamlit
+    st.plotly_chart(fig, use_container_width=True)
+    st.write(time_order, voltage_order, current_order)
 
 
-def get_data(g, cell_iri, uri_label_dict):
+def get_data(g, cell_iri, label_dict):
     name = get_cell_name(g, cell_iri)
     creator = get_creator(g, cell_iri)
     manufacturer = get_manufacturer(g, cell_iri)
-    format = uri_label_dict[get_format(g, cell_iri)].replace("Cell", "")
+    format = label_dict[get_format(g, cell_iri)].replace("Cell", "")
     datasets = get_datasets(g, cell_iri)
     accessURL = get_dataset_url(g, datasets)
-    #pe_material = uri_label_dict[get_positive_active_material(g, cell_iri)]
+    pe_material = label_dict[label_dict[get_positive_active_material(g, cell_iri)]]
+    ne_material = label_dict[label_dict[get_negative_active_material(g, cell_iri)]]
+    (cap_value, unit) = get_cell_capacity(g, cell_iri)
+
+    capacity = str(cap_value) + " " + label_dict[label_dict[str(unit)]]
 
     #format = "Coin"
-    capacity = "200 mAh"
-    pe_material = "LFP"
-    ne_material = "Graphite"
+    #capacity = "200 mAh"
+    #pe_material = "LFP"
+    #ne_material = "Graphite"
 
     productionDate = "2023-05-04"
     #creator = "ORCID"
@@ -283,7 +388,62 @@ def get_data(g, cell_iri, uri_label_dict):
         "accessURL": accessURL
     }
 
+def search_function():
+    st.write("A search bar")
+
+
 g, label_uri_dict, uri_label_dict = load_ontology()
+
+unit_prefLabel = {"kg": "Kilogram", "g": "Gram", 
+             "m": "Metre", "cm": "Centimetre", "mm": "Millimetre", "micron": "Micrometre", 
+             "m3": "CubicMetre", "cm3": "CubicCentimetre", "mm3": "CubicMillimetre","L": "Litre", "mL": "Millilitre", "microL": "Microlitre",
+             "m2": "SquareMetre", "cm2": "SquareCentimetre", "mm2": "SquareMillimetre",
+             "kg/m3": "KilogramPerCubicMetre", "g/cm3": "GramPerCubicCentimetre",
+             "kg/m2": "KilogramPerSquareMetre", "mg/cm2": "MilligramPerSquareCentimetre",
+             "Ah/kg": "AmpereHourPerKilogram", "mAh/g": "MilliampereHourPerGram",
+             "Ah": "AmpereHour", "mAh": "MilliampereHour",
+             "Ah/m2": "AmpereHourPerSquareMetre", "mAh/cm2": "MilliampereHourPerSquareCentimetre",
+             "Wh": "WattHour", "mWh": "MilliwattHour", 
+             "Wh/kg": "WattHourPerKilogram",
+             "Wh/L": "WattHourPerLitre", 
+             "mol/L": "MolePerLitre", "mol/m3": "MolePerCubicMetre",
+             "mol/kg": "MolePerKilogram",
+             "mass fraction": "MassFractionUnit", 
+             "V": "Volt", "mV": "Millivolt",
+             "A": "Ampere", "mA": "Milliampere", 
+             "s": "Second", "min": "Minute", "h": "Hour"}
+
+material_prefLabel = {"LFP" : "LithiumIronPhosphate", 
+                      "LCO": "LithiumCobaltOxide",
+                      "NCA": "LithiumNickelCobaltAluminium",
+                      "LNMO": "LithiumNickelManganeseOxide",
+                      "LMO": "LithiumManganeseOxide",
+                      "NMC": "LithiumNickelManganeseCobaltOxide",
+                      "NMC111": "LithiumNickelManganeseCobalt111",
+                      "NMC532": "LithiumNickelManganeseCobalt532",
+                      "NMC622": "LithiumNickelManganeseCobalt622",
+                      "NMC811": "LithiumNickelManganeseCobalt811",
+                      "Graphite": "Graphite", 
+                      "Si": "Silicon",
+                      "Li": "Lithium",
+                      "PVDF": "PolyvinylFluoride",
+                      "CMC": "CarboxymethylCellulose",
+                      "Carbon Black": "CarbonBlack",
+                      "LiPF6": "LithiumHexafluorophosphate",
+                      "LiTFSI": "LithiumBistriflimide",
+                      "EC": "EthyleneCarbonate",
+                      "EMC": "EthylmethylCarbonate",
+                      "DEC": "DiethyleneCarbonate",
+                      "DMC": "DimethylCarbonate",
+                      "FEC": "FluoroethyleneCarbonate"}
+
+material_abbreviations = flipped_dict = {v: k for k, v in material_prefLabel.items()}
+unit_abbreviations = flipped_dict = {v: k for k, v in unit_prefLabel.items()}
+
+label_dict = {**label_uri_dict, **uri_label_dict, **unit_prefLabel, **unit_abbreviations, **material_prefLabel, **material_abbreviations}
+
+
+search_function()
 
 
 json_g = upload_files(g)
@@ -292,7 +452,7 @@ json_g = upload_files(g)
 #         st.write(s, p, o)
 
 cell_iri = get_cell_iri(json_g)
-dict = get_data(json_g, cell_iri, uri_label_dict)
+dict = get_data(json_g, cell_iri, label_dict)
 
 st.metric(dict["IRI"], dict["name"])
 
@@ -317,9 +477,20 @@ with st.expander("Production Details"):
         st.write(dict["manufacturer"])
 
 with st.expander("Datasets"):
+    
     st.write(dict["datasets"])
     df = download_dataset(dict["accessURL"])
-    plot_time_voltage(json_g, dict["datasets"], df)
+    col1, col2 = st.columns(2)
+    with col1:
+        # Display the DataFrame in Streamlit
+        if st.checkbox("View Data Table"):
+            st.write(df)
+    with col2:
+        plot= st.checkbox("Plot Data")
+            
+    if plot:
+        plot_time_voltage(json_g, dict["datasets"], df)
+    
 
 
 with st.expander("References"):
