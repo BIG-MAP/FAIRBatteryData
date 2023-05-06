@@ -5,6 +5,10 @@ from rdflib import Graph, URIRef, Namespace, Literal
 from rdflib.namespace import RDF, RDFS, SKOS
 import requests
 import plotly.express as px
+import urllib.request
+
+from app_search import search_app
+
 
 @st.cache_data
 def load_ontology():
@@ -21,6 +25,16 @@ def load_ontology():
     experts                     = 'https://raw.githubusercontent.com/BIG-MAP/Batt-O-Matic/main/data/experts.json'
     organizations               = 'https://raw.githubusercontent.com/BIG-MAP/Batt-O-Matic/main/data/organizations.json'
 
+    cell1 = 'https://raw.githubusercontent.com/BIG-MAP/Batt-O-Matic/main/data/SINTEF%20Cell%2020230502-1-1.json',
+    cell2 = 'https://raw.githubusercontent.com/BIG-MAP/Batt-O-Matic/main/data/SINTEF%20Cell%2020230502-2-1.json'
+    cell3 = 'https://raw.githubusercontent.com/BIG-MAP/Batt-O-Matic/main/data/SINTEF%20Cell%2020230502-3-1.json'
+    cell4 = 'https://raw.githubusercontent.com/BIG-MAP/Batt-O-Matic/main/data/SINTEF%20Cell%2020230502-4-1.json'
+
+    data1 = 'https://raw.githubusercontent.com/BIG-MAP/Batt-O-Matic/main/data/SINTEF%2020230502-1-1%20Discharge.json'
+    data2 = 'https://raw.githubusercontent.com/BIG-MAP/Batt-O-Matic/main/data/SINTEF%2020230502-2-1%20Discharge.json'
+    data3 = 'https://raw.githubusercontent.com/BIG-MAP/Batt-O-Matic/main/data/SINTEF%2020230502-3-1%20Discharge.json'
+    data4 = 'https://raw.githubusercontent.com/BIG-MAP/Batt-O-Matic/main/data/SINTEF%2020230502-4-1%20Discharge.json'
+
     g= Graph()
     g.parse(emmo, format='ttl')
     g.parse(quantities, format='ttl')
@@ -30,9 +44,28 @@ def load_ontology():
     g.parse(battery_quantities, format='ttl')
     g.parse(battery, format='ttl')
     g.parse(materials, format='ttl')
-    g.parse(kg_path_mod, format='ttl')
+    #g.parse(kg_path_mod, format='ttl')
     g.parse(experts, format='json-ld')
     g.parse(organizations, format='json-ld')
+
+    # response = requests.get(cell1)
+    # data = json.loads(response.text)
+    # url = cell1
+    # response = urllib.request.urlopen(url)
+
+    # data = json.loads(response.read().decode())
+
+    # g.parse(data=json.dumps(data), format="json-ld")
+
+
+    # g.parse(cell1, format='json-ld')
+    # g.parse(cell2, format='json-ld')
+    # g.parse(cell3, format='json-ld')
+    # g.parse(cell4, format='json-ld')
+    # g.parse(data1, format='json-ld')
+    # g.parse(data2, format='json-ld')
+    # g.parse(data3, format='json-ld')
+    # g.parse(data4, format='json-ld')
     
     # Create a dictionary to hold the mappings
     label_uri_dict = {}
@@ -441,9 +474,6 @@ material_abbreviations = flipped_dict = {v: k for k, v in material_prefLabel.ite
 unit_abbreviations = flipped_dict = {v: k for k, v in unit_prefLabel.items()}
 
 label_dict = {**label_uri_dict, **uri_label_dict, **unit_prefLabel, **unit_abbreviations, **material_prefLabel, **material_abbreviations}
-
-
-search_function()
 
 
 json_g = upload_files(g)

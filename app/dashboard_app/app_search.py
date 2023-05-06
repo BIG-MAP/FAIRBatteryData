@@ -77,6 +77,7 @@ def search_app():
 
             st.dataframe(results_df, 700, 300)
 
-    return results_df
+    return (results_df["CellID"].to_list(), rdf_full_graph)
 
-search_app()
+if __name__ == '__main__':
+    results = search_app()
